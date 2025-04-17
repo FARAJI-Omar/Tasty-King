@@ -13,7 +13,14 @@
             </div>
 
             <div class="category-filter">
-                <button class="category-dropdown">All Categories <i class="fas fa-chevron-down"></i></button>
+                <select class="category-select">
+                    <option value="all">All Categories</option>
+                    <option value="main-course">Main course</option>
+                    <option value="salad">Salad</option>
+                    <option value="vegetarian">Vegetarian</option>
+                    <option value="pizza">Pizza</option>
+                    <option value="desserts">Desserts</option>
+                </select>
             </div>
         </div>
     </div>
@@ -21,7 +28,7 @@
     <hr>
 
     <div class="menu-items">
-        <div class="menu-item-card">
+        <div class="menu-item-card" data-item-id="1">
             <div class="item-image">
                 <img src="{{ asset('images/sandwish.png') }}" alt="Classic Burger Pomodoro">
             </div>
@@ -34,12 +41,12 @@
             </div>
         </div>
 
-        <div class="menu-item-card">
+        <div class="menu-item-card" data-item-id="2">
             <div class="item-image">
-                <img src="{{ asset('images/sandwish.png') }}" alt="Classic Burger Pomodoro">
+                <img src="{{ asset('images/sandwish.png') }}" alt="Cheese Burger">
             </div>
             <div class="item-details">
-                <h3 class="item-name">Classic Burger Pomodoro</h3>
+                <h3 class="item-name">Cheese Burger</h3>
                 <div class="item-actions">
                     <button class="edit-btn">Edit</button>
                     <button class="remove-btn">Remove</button>
@@ -47,12 +54,12 @@
             </div>
         </div>
 
-        <div class="menu-item-card">
+        <div class="menu-item-card" data-item-id="3">
             <div class="item-image">
-                <img src="{{ asset('images/sandwish.png') }}" alt="Classic Burger Pomodoro">
+                <img src="{{ asset('images/sandwish.png') }}" alt="Veggie Burger">
             </div>
             <div class="item-details">
-                <h3 class="item-name">Classic Burger Pomodoro</h3>
+                <h3 class="item-name">Veggie Burger</h3>
                 <div class="item-actions">
                     <button class="edit-btn">Edit</button>
                     <button class="remove-btn">Remove</button>
@@ -60,12 +67,12 @@
             </div>
         </div>
 
-          <div class="menu-item-card">
+        <div class="menu-item-card" data-item-id="4">
             <div class="item-image">
-                <img src="{{ asset('images/sandwish.png') }}" alt="Classic Burger Pomodoro">
+                <img src="{{ asset('images/sandwish.png') }}" alt="Margherita Pizza">
             </div>
             <div class="item-details">
-                <h3 class="item-name">Classic Burger Pomodoro</h3>
+                <h3 class="item-name">Margherita Pizza</h3>
                 <div class="item-actions">
                     <button class="edit-btn">Edit</button>
                     <button class="remove-btn">Remove</button>
@@ -73,12 +80,12 @@
             </div>
         </div>
 
-          <div class="menu-item-card">
+        <div class="menu-item-card" data-item-id="5">
             <div class="item-image">
-                <img src="{{ asset('images/sandwish.png') }}" alt="Classic Burger Pomodoro">
+                <img src="{{ asset('images/sandwish.png') }}" alt="Pepperoni Pizza">
             </div>
             <div class="item-details">
-                <h3 class="item-name">Classic Burger Pomodoro</h3>
+                <h3 class="item-name">Pepperoni Pizza</h3>
                 <div class="item-actions">
                     <button class="edit-btn">Edit</button>
                     <button class="remove-btn">Remove</button>
@@ -86,12 +93,12 @@
             </div>
         </div>
 
-          <div class="menu-item-card">
+        <div class="menu-item-card" data-item-id="6">
             <div class="item-image">
-                <img src="{{ asset('images/sandwish.png') }}" alt="Classic Burger Pomodoro">
+                <img src="{{ asset('images/sandwish.png') }}" alt="Chocolate Cake">
             </div>
             <div class="item-details">
-                <h3 class="item-name">Classic Burger Pomodoro</h3>
+                <h3 class="item-name">Chocolate Cake</h3>
                 <div class="item-actions">
                     <button class="edit-btn">Edit</button>
                     <button class="remove-btn">Remove</button>
@@ -99,12 +106,12 @@
             </div>
         </div>
 
-          <div class="menu-item-card">
+        <div class="menu-item-card" data-item-id="7">
             <div class="item-image">
-                <img src="{{ asset('images/sandwish.png') }}" alt="Classic Burger Pomodoro">
+                <img src="{{ asset('images/sandwish.png') }}" alt="Ice Cream">
             </div>
             <div class="item-details">
-                <h3 class="item-name">Classic Burger Pomodoro</h3>
+                <h3 class="item-name">Ice Cream</h3>
                 <div class="item-actions">
                     <button class="edit-btn">Edit</button>
                     <button class="remove-btn">Remove</button>
@@ -115,6 +122,70 @@
 
     <hr style="margin-bottom: 4rem">
 
+    <!-- Edit Item Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <h2>Edit Item</h2>
+
+            <form id="editItemForm" method="POST" action="" enctype="multipart/form-data">
+                @csrf
+                <input type="hidden" name="item_id" id="itemId">
+
+                <div class="item-image-container">
+                    <div class="item-image-preview" id="imagePreviewContainer">
+                        <img id="previewImage" src="{{ asset('images/sandwish.png') }}" alt="Item Preview">
+                    </div>
+                    <p class="image-info">Recommended: 600x400px, Maximum size: 2MB</p>
+                    <input type="file" name="item_image" id="itemImage" class="image-upload" accept="image/*">
+                    <label for="itemImage" class="upload-btn">Choose Image</label>
+                </div>
+
+                <div class="form-group">
+                    <label for="itemTitle">Title</label>
+                    <input type="text" name="title" id="itemTitle" class="form-input" placeholder="Enter item title" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="itemDescription">Description</label>
+                    <textarea name="description" id="itemDescription" class="form-textarea" placeholder="Enter item description" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="itemPrice">Price</label>
+                    <div class="price-input-container">
+                        <input type="number" name="price" id="itemPrice" class="form-input" placeholder="Enter price" step="0.01" min="0" required>
+                        <span class="currency">dh</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="itemPromotion">Promotion</label>
+                    <div class="promotion-input-container">
+                        <input type="number" name="promotion" id="itemPromotion" class="form-input" placeholder="Enter promotion percentage" min="0" max="100">
+                        <span class="percentage">%</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="itemCategory">Category</label>
+                    <select name="category_id" id="itemCategory" class="form-input" required>
+                        <option value="">Select a category</option>
+                        <option value="1">Burgers</option>
+                        <option value="2">Pizza</option>
+                        <option value="3">Pasta</option>
+                        <option value="4">Desserts</option>
+                        <option value="5">Drinks</option>
+                    </select>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="submit" id="saveChangesBtn" class="save-btn">Save Changes</button>
+                    <button type="button" id="cancelBtn" class="cancel-btn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
 
 @endpush
@@ -176,28 +247,34 @@
         min-width: 180px;
     }
 
-    .category-dropdown {
+    .category-select {
         width: 100%;
         padding: 0.75rem 1rem;
         background-color: #FF7043;
         border: none;
         border-radius: 15px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
         font-size: 0.9rem;
         font-weight: bold;
         color: white;
         cursor: pointer;
         transition: background-color 0.3s ease;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: url('data:image/svg+xml;utf8,<svg fill="white" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+        background-repeat: no-repeat;
+        background-position: right 10px center;
     }
-    .category-dropdown:hover {
+
+    .category-select:hover {
         background-color: #F4511E;
     }
 
-    .category-dropdown i {
-        margin-left: 0.5rem;
-        font-size: 1.1rem;
+    .category-select option {
+        background-color: white;
+        color: #333;
+        font-size: 0.9rem;
+        padding: 10px;
     }
 
     hr {
@@ -291,7 +368,222 @@
         background-color: #ff4343e3;
     }
 
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+    }
 
+    .modal.show {
+        display: flex;
+    }
+
+    .modal-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+    }
+
+    .modal-content {
+        position: relative;
+        background-color: white;
+        width: 90%;
+        max-width: 500px;
+        max-height: 90vh;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        z-index: 1001;
+        overflow-y: auto;
+    }
+
+    .modal-content h2 {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+        color: #333;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .item-image-container {
+        margin-bottom: 1.5rem;
+    }
+
+    .item-image-preview {
+        width: 100%;
+        height: 150px;
+        overflow: hidden;
+        border-radius: 10px;
+        margin-bottom: 0.5rem;
+        border: 2px dashed #ccc;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+    }
+
+    .item-image-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .image-info {
+        font-size: 0.8rem;
+        color: #666;
+        margin-bottom: 0.5rem;
+        text-align: center;
+    }
+
+    .image-upload {
+        position: absolute;
+        width: 0.1px;
+        height: 0.1px;
+        opacity: 0;
+        overflow: hidden;
+        z-index: -1;
+    }
+
+    .upload-btn {
+        display: block;
+        width: 100%;
+        padding: 0.5rem;
+        background-color: #f5f5f5;
+        color: #333;
+        text-align: center;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        font-size: 0.9rem;
+    }
+
+    .upload-btn:hover {
+        background-color: #e0e0e0;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: #333;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .form-input, .form-textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        background-color: #f5f5f5;
+    }
+
+    .form-textarea {
+        min-height: 80px;
+        resize: vertical;
+    }
+
+    .price-input-container, .promotion-input-container {
+        position: relative;
+    }
+
+    .currency, .percentage {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #666;
+    }
+
+    .modal-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 1rem;
+    }
+
+    .save-btn, .cancel-btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 30px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.9rem;
+    }
+
+    .save-btn {
+        background-color: #FF7043;
+        color: white;
+        flex: 1;
+        margin-right: 0.5rem;
+    }
+
+    .save-btn:hover {
+        background-color: #F4511E;
+    }
+
+    .cancel-btn {
+        background-color: #f5f5f5;
+        color: #333;
+        flex: 1;
+        margin-left: 0.5rem;
+    }
+
+    .cancel-btn:hover {
+        background-color: #e0e0e0;
+    }
 
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get modal elements
+        const modal = document.getElementById('editModal');
+        const editButtons = document.querySelectorAll('.edit-btn');
+        const cancelBtn = document.getElementById('cancelBtn');
+
+        // Open modal when edit button is clicked
+        editButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Show the modal
+                modal.classList.add('show');
+                document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            });
+        });
+
+        // Close modal when cancel button is clicked
+        cancelBtn.addEventListener('click', function() {
+            closeModal();
+        });
+
+        // Close modal when clicking outside the modal content
+        modal.addEventListener('click', function(event) {
+            if (event.target === modal || event.target.classList.contains('modal-overlay')) {
+                closeModal();
+            }
+        });
+
+        // Helper function to close the modal
+        function closeModal() {
+            modal.classList.remove('show');
+            document.body.style.overflow = 'auto'; // Re-enable scrolling
+        }
+    });
+</script>
+
 

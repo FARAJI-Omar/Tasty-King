@@ -12,32 +12,37 @@
     </div>
 </div>
 
-<div class="buttons">
+<form action="{{ route('cart') }}" method="GET" class="buttons">
     <div class="size-quantity">
         <div class="size-selection">
             <h3>Select size:</h3>
             <div class="size-options">
-                <button class="size-btn">small</button>
-                <button class="size-btn">regular</button>
-                <button class="size-btn">big</button>
+                <input type="radio" id="size-small" name="size" value="small" class="size-radio" hidden>
+                <label for="size-small" class="size-btn">small</label>
+
+                <input type="radio" id="size-regular" name="size" value="regular" class="size-radio" hidden>
+                <label for="size-regular" class="size-btn">regular</label>
+
+                <input type="radio" id="size-big" name="size" value="big" class="size-radio" hidden>
+                <label for="size-big" class="size-btn">big</label>
             </div>
         </div>
         <div class="quantity-selection">
             <h3>Quantity:</h3>
             <div class="quantity-controls">
-                <button class="quantity-btn decrease">-</button>
-                <span class="quantity-value">1</span>
-                <button class="quantity-btn increase">+</button>
+                <button type="button" class="quantity-btn decrease">-</button>
+                <input type="number" name="quantity" value="1" min="1" max="10" class="quantity-value" readonly>
+                <button type="button" class="quantity-btn increase">+</button>
             </div>
         </div>
     </div>
     <div class="add-tocart">
-        <button class="cart-btn">
+        <button type="submit" class="cart-btn">
             <i class="fas fa-shopping-cart"></i> Add to cart
             <span class="price">35.99 dh</span>
         </button>
     </div>
-</div>
+</form>
 
 @include('layouts.footer')
 @endsection
@@ -45,19 +50,47 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const sizeButtons = document.querySelectorAll('.size-btn');
+        const sizeLabels = document.querySelectorAll('.size-btn');
+        const sizeRadios = document.querySelectorAll('.size-radio');
+        const quantityInput = document.querySelector('input.quantity-value');
+        const decreaseBtn = document.querySelector('.quantity-btn.decrease');
+        const increaseBtn = document.querySelector('.quantity-btn.increase');
 
-        sizeButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                // Reset all buttons to default background
-                sizeButtons.forEach(btn => {
-                    btn.style.backgroundColor = '';
-                    btn.style.border = '';
+        if(!Array.from(sizeRadios).some(radio => radio.checked)) {
+            const regularLabel = document.querySelector('label[for="size-regular"]');
+            if(regularLabel) {
+                regularLabel.click();
+            }
+        }
+
+        sizeLabels.forEach(label => {
+            label.addEventListener('click', function() {
+                sizeLabels.forEach(lbl => {
+                    lbl.style.backgroundColor = '';
+                    lbl.style.border = '';
+                    lbl.classList.remove('active');
                 });
-                // Set clicked button background
                 this.style.backgroundColor = '#FFB30E';
-                this.style.border = ' black 1px solid ';
+                this.style.border = 'black 1px solid';
+                this.classList.add('active');
+
+                const radioId = this.getAttribute('for');
+                document.getElementById(radioId).checked = true;
             });
+        });
+
+        decreaseBtn.addEventListener('click', function() {
+            let currentValue = parseInt(quantityInput.value);
+            if (currentValue > 1) {
+                quantityInput.value = currentValue - 1;
+            }
+        });
+
+        increaseBtn.addEventListener('click', function() {
+            let currentValue = parseInt(quantityInput.value);
+            if (currentValue < 10) {
+                quantityInput.value = currentValue + 1;
+            }
         });
     });
 </script>
@@ -107,7 +140,6 @@
         max-width: 80%;
     }
 
-    /* Buttons Styling */
     .buttons {
         display: flex;
         justify-self: center;
@@ -145,6 +177,17 @@
         font-size: 14px;
         cursor: pointer;
         transition: all 0.2s ease;
+        display: inline-block;
+    }
+
+    .size-btn.active {
+        background-color: #FFB30E;
+        border: 1px solid black;
+    }
+
+    .size-radio:checked + .size-btn {
+        background-color: #FFB30E;
+        border: 1px solid black;
     }
 
 
@@ -184,6 +227,10 @@
     .quantity-value {
         font-size: 16px;
         font-weight: 600;
+        width: 40px;
+        text-align: center;
+        border: none;
+        background: transparent;
     }
 
     .add-tocart {

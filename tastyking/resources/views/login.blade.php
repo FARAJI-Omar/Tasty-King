@@ -1,27 +1,39 @@
 @extends('layouts.app')
 
 @section('content')
- 
+
 <div class="main">
-     
+
     <div class="left-div">
         <h1 class="title">Log in</h1>
         <p class="subtitle">Savor every bite—fast, fresh, and healthy!</p>
     </div>
 
-     
+
     <div class="right-div">
-        <form method="POST" action="" class="register-form">
+        <form method="POST" action="{{ route('login') }}" class="register-form">
             @csrf
+
+            @if ($errors->has('login'))
+                <div class="alert alert-danger">
+                    {{ $errors->first('login') }}
+                </div>
+            @endif
 
             <div class="form-group">
                 <label for="name">Name</label>
-                <input type="text" id="name" name="name" required>
+                <input type="text" id="name" name="name" value="{{ old('name') }}" required>
+                @error('name')
+                    <span class="error-message">{{ $message }}</span>
+                @enderror
             </div>
 
             <div class="form-group">
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" required>
+                @error('password')
+                    <span class="error-message">{{ $message }}</span>
+                @enderror
             </div>
 
             <button type="submit" class="register-btn">Login</button>
@@ -114,10 +126,16 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    width: 100%;
+    max-width: 400px;
 }
 
 .form-group {
     margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
 }
 
 .form-group label {
@@ -130,6 +148,7 @@
 
 .form-group input {
     width: 100%;
+    max-width: 300px;
     padding: 5px;
     background-color: #FFEDAA;
     border: 1px solid #ddd;
@@ -157,6 +176,28 @@
 .login-link{
     color: #FFB30E;
     font-size: 14px;
+}
+
+.alert {
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    width: 90%;
+    max-width: 250px;
+    text-align: center;
+}
+
+.alert-danger {
+    background-color: #ffebee;
+    color: #d32f2f;
+    border: 1px solid #ffcdd2;
+}
+
+.error-message {
+    color: #d32f2f;
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
 }
 
 /* install app section */

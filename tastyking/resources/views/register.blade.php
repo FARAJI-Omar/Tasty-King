@@ -16,22 +16,34 @@
 
             <div class="form-group">
                 <label for="name">Name</label>
-                <input type="text" id="name" name="name" required>
+                <input type="text" id="name" name="name" value="{{ old('name') }}" required>
+                @error('name')
+                    <span class="error-message">{{ $message }}</span>
+                @enderror
             </div>
 
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" required>
+                <input type="email" id="email" name="email" value="{{ old('email') }}" required>
+                @error('email')
+                    <span class="error-message">{{ $message }}</span>
+                @enderror
             </div>
 
             <div class="form-group">
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" required>
+                @error('password')
+                    <span class="error-message">{{ $message }}</span>
+                @enderror
             </div>
 
             <div class="form-group">
                 <label for="password_confirmation">Re-type Password</label>
                 <input type="password" id="password_confirmation" name="password_confirmation" required>
+                @error('password_confirmation')
+                    <span class="error-message">{{ $message }}</span>
+                @enderror
             </div>
 
             <div class="form-group">
@@ -40,6 +52,9 @@
                     <input type="file" id="photo" name="photo" accept="image/*" class="photo-input">
                 </div>
                 <p class="input-hint">Choose a profile picture (optional)</p>
+                @error('photo')
+                    <span class="error-message">{{ $message }}</span>
+                @enderror
             </div>
 
             <button type="submit" class="register-btn">Register</button>
@@ -284,6 +299,13 @@
     color: #666;
     line-height: 1.4;
     font-family: 'Poppins', sans-serif;
+}
+
+.error-message {
+    color: #d32f2f;
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
 }
 
 </style>

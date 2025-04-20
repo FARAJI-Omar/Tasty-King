@@ -36,7 +36,6 @@ class ClientAuthController extends Controller
             'password' => Hash::make($request->password),
         ];
 
-        
         if ($request->hasFile('photo')) {
             $photoPath = $request->file('photo')->store('profile-photos', 'public');
             $data['photo'] = $photoPath;
@@ -44,8 +43,35 @@ class ClientAuthController extends Controller
             $data['photo'] = 'images/profile.png';
         }
 
-        Client::create($data);
+        $client = Client::create($data);
+
+        // Log the user in after registration
+        Auth::guard('client')->login($client);
 
         return redirect()->route('menu');
+    }
+
+    public function login(Request $request)
+    {
+        $request->validate([
+            'name' => 'required',
+            'password' => 'required',
+        ]);
+
+        $credentals = $request->only('name', 'password');
+
+        if (Auth::guard('client')->attempt($credentals)) {
+            $request->session()->regenerate();
+
+            return redirect('/menu');
+        }
+        return back()->withErrors([
+            'login' => 'Invalid name or password'
+        ])->withInput();
+    }
+
+    public function logout(){
+        Auth::guard('client')->logout();
+        return redirect('/login');
     }
 }

@@ -1,20 +1,20 @@
 <header>
     <nav>
        <div class="header">
-            <!-- Logo -->
+
             <div class="logo">
               <a href="{{ route('welcome') }}">
                 <img class="icon" src="{{ asset('images/logo tastyking.png')}}"></img>
               </a>
             </div>
 
-            <!-- Search Bar -->
+
             <div class="search-bar">
-            <i class="fa-solid fa-magnifying-glass" style="color: #ffb30e;"></i>              
+            <i class="fa-solid fa-magnifying-glass" style="color: #ffb30e;"></i>
             <input type="text" placeholder="Search Food" />
             </div>
 
-            <!-- Login Button -->
+
             <a class="login-btn" href="{{ route('login') }}">
                 <i class="fa-solid fa-user" style="color: #ffb30e;"></i>
                 Login
@@ -44,13 +44,13 @@ nav{
   margin-right: 50px;
 }
 
-/* Logo */
+
 .logo img {
     width: 85%;
 }
 
 
-/* Search Bar */
+
 .search-bar {
   display: flex;
   align-items: center;
@@ -76,7 +76,7 @@ nav{
   font-size: 16px;
 }
 
-/* Login Button */
+
 .login-btn {
   background-color: #fff1c7;
   color: #f59e0b;

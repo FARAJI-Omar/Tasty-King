@@ -45,7 +45,7 @@
     </div>
 
     <div class="footer-bottom">
-        <p>All Rights Reserved © TastyKing, 2023</p>
+        <p>All Rights Reserved © TastyKing, {{ date('Y') }}</p>
     </div>
 </footer>
 <div class="yellowpart"></div>

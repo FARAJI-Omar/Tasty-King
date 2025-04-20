@@ -34,7 +34,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Chef users section (4 chefs) -->
+
                     <tr class="chef-section">
                         <td><img src="{{ asset('images/chef.jpg') }}" alt="User" class="user-avatar"></td>
                         <td>John Smith</td>
@@ -72,7 +72,7 @@
                         <td colspan="6"></td>
                     </tr>
 
-                    <!-- Client users section (7 clients) -->
+
                     <tr>
                         <td><img src="{{ asset('images/chef.jpg') }}" alt="User" class="user-avatar"></td>
                         <td>Emma Johnson</td>
@@ -298,19 +298,19 @@
         background-color: #FFCDD2;
     }
 
-    /* Add a visual separator between chef and client sections */
+
     .section-divider td {
         height: 20px;
         border-bottom: 2px solid #FFB30E;
     }
 
-    /* Smaller font size for Last active column */
+
     .last-active {
         font-size: 0.8rem;
         color: #666;
     }
 
-    /* Custom styles for select dropdown */
+
     .add-chef-select option {
         background-color: white;
         color: #333;

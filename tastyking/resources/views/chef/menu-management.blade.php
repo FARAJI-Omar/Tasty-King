@@ -126,7 +126,7 @@
 
     <hr style="margin-bottom: 4rem">
 
-    <!-- Edit Item Modal -->
+
     <div id="editModal" class="modal">
         <div class="modal-overlay"></div>
         <div class="modal-content">
@@ -183,7 +183,7 @@
         </div>
     </div>
 
-    <!-- Add New Item Modal -->
+
     <div id="addItemModal" class="modal">
         <div class="modal-overlay"></div>
         <div class="modal-content">
@@ -454,7 +454,7 @@
         background-color: #ff4343e3;
     }
 
-    /* Modal Styles */
+
     .modal {
         display: none;
         position: fixed;

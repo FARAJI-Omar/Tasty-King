@@ -2,29 +2,28 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ClientAuthController;
-
-
-
-
-
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
-// Authentication Routes
+// authentication routes
 Route::get('/login', [ClientAuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [ClientAuthController::class, 'login'])->name('login');
 Route::get('/register', [ClientAuthController::class, 'showRegisterForm'])->name('register');
-
 Route::post('/register', [ClientAuthController::class, 'register'])->name('register');
 
+// require client auth
+Route::middleware('auth:client')->group(function () {
+    Route::get('/logout', [ClientAuthController::class, 'logout'])->name('logout');
+
+    Route::get('menu', function () {
+        return view('menu');
+    })->name('menu');
+});
 
 
-
-
-Route::get('menu', function () {
-    return view('menu');
-})->name('menu');
 
 Route::get('item-details', function () {
     return view('itemDetails');
@@ -64,3 +63,5 @@ Route::get('admin/settings', function () {
 Route::get('chef/menu-management', function () {
     return view('chef.menu-management');
 })->name('chef-menu-management');
+
+

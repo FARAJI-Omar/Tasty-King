@@ -10,7 +10,7 @@
         <span>price</span>
     </div>
     <div class="cart-divider"></div>
-        <!-- Cart Item 1 -->
+
         <div class="cart-item">
             <div class="item-image">
                 <img src="{{ asset('images/sandwish.png') }}" alt="Crispy Sandwich">
@@ -25,7 +25,7 @@
             <button class="remove-btn">&times;</button>
         </div>
 
-        <!-- Cart Item 2 -->
+
         <div class="cart-item">
             <div class="item-image">
                 <img src="{{ asset('images/sandwish.png') }}" alt="Healthy Burger">
@@ -40,7 +40,7 @@
             <button class="remove-btn">&times;</button>
         </div>
 
-        <!-- Cart Item 3 -->
+
         <div class="cart-item">
             <div class="item-image">
                 <img src="{{ asset('images/sandwish.png') }}" alt="Hot Soup">

@@ -26,7 +26,7 @@
 <div class="howitworks">
     <h2 class="howitworks-title">How does it work</h2>
     <div class="steps-container">
-        <!-- Step 1 -->
+
         <div class="step">
             <div class="step-icon">
                 <img src="{{ asset('images/step1.png')}}" alt="Order" class="icon">
@@ -35,7 +35,7 @@
             <p class="step-description">Check our hundreds of items to pick your favorite food</p>
         </div>
 
-        <!-- Step 2 -->
+
         <div class="step">
             <div class="step-icon">
                 <img src="{{ asset('images/step2.png')}}" alt="Order" class="icon">
@@ -44,7 +44,7 @@
             <p class="step-description">Choose the location where your food will be delivered</p>
         </div>
 
-        <!-- Step 3 -->
+
         <div class="step">
             <div class="step-icon">
                 <img src="{{ asset('images/step3.png')}}" alt="Order" class="icon">
@@ -53,7 +53,7 @@
             <p class="step-description">It's quick, safe, and secure. Select several methods of payment</p>
         </div>
 
-        <!-- Step 4 -->
+
         <div class="step">
             <div class="step-icon">
                 <img src="{{ asset('images/step4.png')}}" alt="Order" class="icon">
@@ -187,7 +187,7 @@
 </div>
 
 <div class="deals">
-    <!-- First Deal Card - Sandwiches -->
+
     <div class="deal-card">
         <div class="deal-content">
             <h2 class="deal-title">Best deals <span class="highlight">Crispy Sandwiches</span></h2>
@@ -199,7 +199,7 @@
         </div>
     </div>
 
-    <!-- Second Deal Card - Fried Chicken -->
+
     <div class="deal-card">
         <div class="deal-image">
             <img src="{{ asset('images/celebrate.png') }}" alt="Fried Chicken">
@@ -211,7 +211,7 @@
         </div>
     </div>
 
-    <!-- Third Deal Card - Pizza -->
+
     <div class="deal-card">
         <div class="deal-content">
             <h2 class="deal-title">Wanna eat hot & <span class="highlight">spicy Pizza?</span></h2>

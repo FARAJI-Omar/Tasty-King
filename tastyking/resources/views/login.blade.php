@@ -1,15 +1,15 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- Main Registration Section -->
+ 
 <div class="main">
-    <!-- Left Division -->
+     
     <div class="left-div">
         <h1 class="title">Log in</h1>
         <p class="subtitle">Savor every bite—fast, fresh, and healthy!</p>
     </div>
 
-    <!-- Right Division -->
+     
     <div class="right-div">
         <form method="POST" action="" class="register-form">
             @csrf

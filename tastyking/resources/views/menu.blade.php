@@ -17,34 +17,41 @@
 </div>
 
 <div class="menu-items">
-    <div class="item-card">
+    <a href="{{ route('item-details') }}" class="item-card">
         <img src="{{ asset('images/sandwish.png') }}" alt="">
-        <h2>Item title</h2>
-    </div>
-    <div class="item-card">
+        <h2>Classic Burger</h2>
+        <p class="item-price">45.00 dh</p>
+    </a>
+    <a href="{{ route('item-details') }}" class="item-card">
         <img src="{{ asset('images/sandwish.png') }}" alt="">
-        <h2>Item title</h2>
-    </div>
-    <div class="item-card">
+        <h2>Cheese Burger</h2>
+        <p class="item-price">55.00 dh</p>
+    </a>
+    <a href="{{ route('item-details') }}" class="item-card">
         <img src="{{ asset('images/sandwish.png') }}" alt="">
-        <h2>Item title</h2>
-    </div>
-    <div class="item-card">
+        <h2>Veggie Burger</h2>
+        <p class="item-price">40.00 dh</p>
+    </a>
+    <a href="{{ route('item-details') }}" class="item-card">
         <img src="{{ asset('images/sandwish.png') }}" alt="">
-        <h2>Item title</h2>
-    </div>
-    <div class="item-card">
+        <h2>Margherita Pizza</h2>
+        <p class="item-price">60.00 dh</p>
+    </a>
+    <a href="{{ route('item-details') }}" class="item-card">
         <img src="{{ asset('images/sandwish.png') }}" alt="">
-        <h2>Item title</h2>
-    </div>
-    <div class="item-card">
+        <h2>Pepperoni Pizza</h2>
+        <p class="item-price">70.00 dh</p>
+    </a>
+    <a href="{{ route('item-details') }}" class="item-card">
         <img src="{{ asset('images/sandwish.png') }}" alt="">
-        <h2>Item title</h2>
-    </div>
-    <div class="item-card">
+        <h2>Chocolate Cake</h2>
+        <p class="item-price">35.00 dh</p>
+    </a>
+    <a href="{{ route('item-details') }}" class="item-card">
         <img src="{{ asset('images/sandwish.png') }}" alt="">
-        <h2>Item title</h2>
-    </div>
+        <h2>Ice Cream</h2>
+        <p class="item-price">25.00 dh</p>
+    </a>
 </div>
 
 <hr>
@@ -60,13 +67,11 @@
 
         categoryButtons.forEach(button => {
             button.addEventListener('click', function() {
-                // Set all buttons to reduced opacity
                 categoryButtons.forEach(btn => {
                     btn.classList.remove('active');
                     btn.style.opacity = '0.6';
                 });
 
-                // Set clicked button to full opacity
                 this.classList.add('active');
                 this.style.opacity = '1';
             });
@@ -148,11 +153,30 @@
         width: 250px;
     }
 
+    .item-card {
+        text-decoration: none;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+
+    .item-card:hover {
+        transform: translateY(-5px);
+    }
+
     .item-card h2 {
         font-size: 1rem;
         font-weight: bold;
         color: #202020;
         margin-top: 10px;
+        margin-bottom: 5px;
+    }
+
+    .item-price {
+        font-size: 0.85rem;
+        color: #565656;
+        font-weight: 500;
+        margin: 0;
+        font-family: 'Poppins', sans-serif;
     }
 
     .item-card img {
@@ -161,6 +185,5 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
-
     }
 </style>

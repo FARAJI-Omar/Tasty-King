@@ -11,7 +11,7 @@
 
     <!-- Right Division -->
     <div class="right-div">
-        <form method="POST" action="" class="register-form">
+        <form method="POST" action="{{ route('register')}}" class="register-form" enctype="multipart/form-data">
             @csrf
 
             <div class="form-group">
@@ -32,6 +32,14 @@
             <div class="form-group">
                 <label for="password_confirmation">Re-type Password</label>
                 <input type="password" id="password_confirmation" name="password_confirmation" required>
+            </div>
+
+            <div class="form-group">
+                <label for="photo">Profile Photo</label>
+                <div class="file-input-wrapper">
+                    <input type="file" id="photo" name="photo" accept="image/*" class="photo-input">
+                </div>
+                <p class="input-hint">Choose a profile picture (optional)</p>
             </div>
 
             <button type="submit" class="register-btn">Register</button>
@@ -99,7 +107,7 @@
     justify-content: center;
     padding: 2rem;
     gap: 4rem;
-    height: 600px;
+    height: 700px;
 
 }
 
@@ -144,10 +152,16 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    width: 100%;
+    max-width: 400px;
 }
 
 .form-group {
     margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
 }
 
 .form-group label {
@@ -160,11 +174,39 @@
 
 .form-group input {
     width: 100%;
+    max-width: 300px;
     padding: 5px;
     background-color: #FFEDAA;
     border: 1px solid #ddd;
     border-radius: 10px;
     font-size: 1rem;
+}
+
+.file-input-wrapper {
+    background-color: #FFEDAA;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    cursor: pointer;
+}
+
+.form-group input[type="file"] {
+    font-size: 0.8rem;
+    cursor: pointer;
+    color: #666;
+    width: 80%;
+}
+
+.input-hint {
+    font-size: 12px;
+    color: #888;
+    margin-top: 4px;
+    font-style: italic;
 }
 
 .register-btn {

@@ -302,10 +302,11 @@
 }
 
 .error-message {
-    color: #d32f2f;
+    color: red;
     font-size: 12px;
     margin-top: 5px;
     display: block;
+    border-bottom: 2px solid red;
 }
 
 </style>

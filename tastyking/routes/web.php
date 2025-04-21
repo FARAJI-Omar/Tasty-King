@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserAuthController;
+use App\Http\Controllers\CLientController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Middleware\RoleClient;
 use App\Http\Middleware\RoleChef;
@@ -26,6 +27,11 @@ Route::middleware('auth')->group(function () {
         Route::get('menu', function () {
             return view('menu');
         })->name('menu');
+
+        Route::get('profile', [CLientController::class, 'showProfile'])->name('profile');
+        Route::put('profile/update-info', [CLientController::class, 'editPersonalInfo'])->name('profile.update-info');
+        Route::put('profile/update-password', [CLientController::class, 'editPassword'])->name('profile.update-password');
+        Route::delete('profile/delete-account', [CLientController::class, 'deleteAccount'])->name('profile.delete-account');
     });
 
     // chef routes
@@ -47,20 +53,18 @@ Route::get('item-details', function () {
     return view('itemDetails');
 })->name('item-details');
 
-// Client routes
-Route::middleware(['auth', 'role.client'])->group(function () {
-    Route::get('cart', function () {
-        return view('cart');
-    })->name('cart');
+Route::get('cart', function () {
+    return view('cart');
+})->name('cart');
+Route::get('checkout', function () {
+    return view('checkout');
+})->name('checkout');
+Route::get('order-tracking', function () {
+    return view('orderTracking');
+})->name('order-tracking');
 
-    Route::get('checkout', function () {
-        return view('checkout');
-    })->name('checkout');
 
-    Route::get('order-tracking', function () {
-        return view('orderTracking');
-    })->name('order-tracking');
-});
+
 
 Route::get('admin/dashboard', function () {
     return view('admin.dashboard');

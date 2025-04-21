@@ -29,8 +29,9 @@
                         @endif
                     </button>
                     <div id="profile-dropdown" class="profile-dropdown">
-                        <a href="#" class="dropdown-item"><i class="fa-solid fa-user" style="margin-right: 8px;"></i>Profile</a>
+                        <a href="{{ route('profile') }}" class="dropdown-item"><i class="fa-solid fa-user" style="margin-right: 8px;"></i>Profile</a>
                         <a href="#" class="dropdown-item"><i class="fa-solid fa-bag-shopping" style="margin-right: 8px;"></i>Orders</a>
+                        <a href="{{ route('menu') }}" class="dropdown-item"><i class="fa-solid fa-list" style="margin-right: 8px;"></i>Menu</a>
                         <hr>
                         <a href="{{ route('logout') }}" class="dropdown-item"><i class="fa-solid fa-right-from-bracket" style="margin-right: 8px;"></i>Logout</a>
                     </div>

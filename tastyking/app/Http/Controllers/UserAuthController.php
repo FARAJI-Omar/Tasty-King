@@ -6,7 +6,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 
 class UserAuthController extends Controller
 {
@@ -34,6 +33,7 @@ class UserAuthController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => 'client',
         ];
 
         if ($request->hasFile('photo')) {
@@ -43,7 +43,6 @@ class UserAuthController extends Controller
 
         $user = User::create($data);
 
-        // Log the user in after registration
         Auth::login($user);
 
         return $this->loginRedirect();

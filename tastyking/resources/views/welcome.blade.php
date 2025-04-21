@@ -13,7 +13,7 @@
                     <h3>Start your Tasty order</h3>
                 </div>
                 <div class="find-food-btn">
-                    <a href="">Find Food</a>
+                    <a href="{{ route('menu')}}">Find Food</a>
                 </div>
             </div>
         </div>

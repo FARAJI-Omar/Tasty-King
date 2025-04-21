@@ -15,11 +15,11 @@
             </div>
 
 
-            @auth('client')
+            @auth
                 <div class="profile-container">
                     <button id="profile-button" class="profile-button">
                         @php
-                            $photoPath = Auth::guard('client')->user()->photo;
+                            $photoPath = Auth::user()->photo;
                         @endphp
 
                         @if(!empty($photoPath))
@@ -32,7 +32,7 @@
                         <a href="#" class="dropdown-item"><i class="fa-solid fa-user" style="margin-right: 8px;"></i>Profile</a>
                         <a href="#" class="dropdown-item"><i class="fa-solid fa-bag-shopping" style="margin-right: 8px;"></i>Orders</a>
                         <hr>
-                        <a href="{{ asset('logout') }}" class="dropdown-item"><i class="fa-solid fa-right-from-bracket" style="margin-right: 8px;"></i>Logout</a>
+                        <a href="{{ route('logout') }}" class="dropdown-item"><i class="fa-solid fa-right-from-bracket" style="margin-right: 8px;"></i>Logout</a>
                     </div>
                 </div>
             @else

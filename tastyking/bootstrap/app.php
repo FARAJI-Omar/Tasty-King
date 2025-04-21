@@ -17,6 +17,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'chef' => \App\Http\Middleware\RoleChef::class,
         ]);
+        $middleware->alias([
+            'admin' => \App\Http\Middleware\RoleAdmin::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

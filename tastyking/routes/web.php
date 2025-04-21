@@ -1,26 +1,44 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ClientAuthController;
+use App\Http\Controllers\UserAuthController;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Middleware\RoleClient;
+use App\Http\Middleware\RoleChef;
+use App\Http\Middleware\RoleAdmin;
 
 Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
 // authentication routes
-Route::get('/login', [ClientAuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [ClientAuthController::class, 'login'])->name('login');
-Route::get('/register', [ClientAuthController::class, 'showRegisterForm'])->name('register');
-Route::post('/register', [ClientAuthController::class, 'register'])->name('register');
+Route::get('/login', [UserAuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [UserAuthController::class, 'login'])->name('login');
+Route::get('/register', [UserAuthController::class, 'showRegisterForm'])->name('register');
+Route::post('/register', [UserAuthController::class, 'register'])->name('register');
 
-// require client auth
-Route::middleware('auth:client')->group(function () {
-    Route::get('/logout', [ClientAuthController::class, 'logout'])->name('logout');
+// require auth
+Route::middleware('auth')->group(function () {
+    Route::get('/logout', [UserAuthController::class, 'logout'])->name('logout');
 
-    Route::get('menu', function () {
-        return view('menu');
-    })->name('menu');
+    // client routes
+    Route::middleware(RoleClient::class)->group(function () {
+        Route::get('menu', function () {
+            return view('menu');
+        })->name('menu');
+    });
+
+    // chef routes
+    Route::middleware(RoleChef::class)->group(function () {
+        Route::get('chef/menu-management', function () {
+            return view('chef.menu-management');
+        })->name('chef-menu-management');
+    });
+
+    // admin routes
+    Route::middleware(RoleAdmin::class)->group(function () {
+        //
+    });
 });
 
 
@@ -29,17 +47,20 @@ Route::get('item-details', function () {
     return view('itemDetails');
 })->name('item-details');
 
-Route::get('cart', function () {
-    return view('cart');
-})->name('cart');
+// Client routes
+Route::middleware(['auth', 'role.client'])->group(function () {
+    Route::get('cart', function () {
+        return view('cart');
+    })->name('cart');
 
-Route::get('checkout', function () {
-    return view('checkout');
-})->name('checkout');
+    Route::get('checkout', function () {
+        return view('checkout');
+    })->name('checkout');
 
-Route::get('order-tracking', function () {
-    return view('orderTracking');
-})->name('order-tracking');
+    Route::get('order-tracking', function () {
+        return view('orderTracking');
+    })->name('order-tracking');
+});
 
 Route::get('admin/dashboard', function () {
     return view('admin.dashboard');
@@ -56,12 +77,3 @@ Route::get('admin/user-management', function () {
 Route::get('admin/settings', function () {
     return view('admin.settings');
 })->name('settings');
-
-
-
-
-Route::get('chef/menu-management', function () {
-    return view('chef.menu-management');
-})->name('chef-menu-management');
-
-

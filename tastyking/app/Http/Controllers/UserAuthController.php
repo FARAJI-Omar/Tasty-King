@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Client;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
-class ClientAuthController extends Controller
+class UserAuthController extends Controller
 {
     public function showLoginForm()
     {
@@ -24,7 +24,7 @@ class ClientAuthController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'email' => 'required|email|unique:clients',
+            'email' => 'required|email|unique:users',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'password' => 'required|min:6',
             'password_confirmation' => 'required|same:password',
@@ -39,16 +39,14 @@ class ClientAuthController extends Controller
         if ($request->hasFile('photo')) {
             $photoPath = $request->file('photo')->store('profile-photos', 'public');
             $data['photo'] = $photoPath;
-        } else {
-            $data['photo'] = 'images/profile.png';
         }
 
-        $client = Client::create($data);
+        $user = User::create($data);
 
         // Log the user in after registration
-        Auth::guard('client')->login($client);
+        Auth::login($user);
 
-        return redirect()->route('menu');
+        return $this->loginRedirect();
     }
 
     public function login(Request $request)
@@ -60,18 +58,35 @@ class ClientAuthController extends Controller
 
         $credentals = $request->only('name', 'password');
 
-        if (Auth::guard('client')->attempt($credentals)) {
+        if (Auth::attempt($credentals)) {
             $request->session()->regenerate();
 
-            return redirect('/menu');
+            return $this->loginRedirect();
         }
         return back()->withErrors([
             'login' => 'Invalid name or password'
         ])->withInput();
     }
 
-    public function logout(){
-        Auth::guard('client')->logout();
+    public function logout()
+    {
+        Auth::logout();
         return redirect('/login');
+    }
+
+
+    protected function loginRedirect()
+    {
+        $user = Auth::user();
+
+        if ($user->role === 'client') {
+            return redirect()->route('menu');
+        } elseif ($user->role === 'chef') {
+            return redirect()->route('chef-menu-management');
+        } elseif ($user->role === 'admin') {
+            return redirect()->route('dashboard');
+        } else {
+            abort(404, 'Role not recognized.');
+        }
     }
 }

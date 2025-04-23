@@ -7,51 +7,20 @@
 </div>
 <hr>
 <div class="categories">
-    <button class="category-btn">All</button>
-    <button class="category-btn">Main course</button>
-    <button class="category-btn">Salad</button>
-    <button class="category-btn">Vegetarian</button>
-    <button class="category-btn">Main course</button>
-    <button class="category-btn">Pizza</button>
-    <button class="category-btn">Desserts</button>
+    <button class="category-btn active" style="opacity: 1;">All</button>
+    @foreach($categories as $category)
+        <button class="category-btn" style="opacity: 0.6;">{{ $category->name }}</button>
+    @endforeach
 </div>
 
 <div class="menu-items">
+    @foreach($meals as $meal)
     <a href="{{ route('item-details') }}" class="item-card">
-        <img src="{{ asset('images/sandwish.png') }}" alt="">
-        <h2>Classic Burger</h2>
-        <p class="item-price">45.00 dh</p>
+        <img src="{{ asset('storage/' . $meal->image) }}" alt="{{ $meal->name }}">
+        <h2>{{ $meal->name }}</h2>
+        <p class="item-price">{{ $meal->price }} dh</p>
     </a>
-    <a href="{{ route('item-details') }}" class="item-card">
-        <img src="{{ asset('images/sandwish.png') }}" alt="">
-        <h2>Cheese Burger</h2>
-        <p class="item-price">55.00 dh</p>
-    </a>
-    <a href="{{ route('item-details') }}" class="item-card">
-        <img src="{{ asset('images/sandwish.png') }}" alt="">
-        <h2>Veggie Burger</h2>
-        <p class="item-price">40.00 dh</p>
-    </a>
-    <a href="{{ route('item-details') }}" class="item-card">
-        <img src="{{ asset('images/sandwish.png') }}" alt="">
-        <h2>Margherita Pizza</h2>
-        <p class="item-price">60.00 dh</p>
-    </a>
-    <a href="{{ route('item-details') }}" class="item-card">
-        <img src="{{ asset('images/sandwish.png') }}" alt="">
-        <h2>Pepperoni Pizza</h2>
-        <p class="item-price">70.00 dh</p>
-    </a>
-    <a href="{{ route('item-details') }}" class="item-card">
-        <img src="{{ asset('images/sandwish.png') }}" alt="">
-        <h2>Chocolate Cake</h2>
-        <p class="item-price">35.00 dh</p>
-    </a>
-    <a href="{{ route('item-details') }}" class="item-card">
-        <img src="{{ asset('images/sandwish.png') }}" alt="">
-        <h2>Ice Cream</h2>
-        <p class="item-price">25.00 dh</p>
-    </a>
+    @endforeach
 </div>
 
 <hr>

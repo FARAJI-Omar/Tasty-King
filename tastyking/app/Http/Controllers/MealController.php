@@ -21,12 +21,6 @@ class MealController extends Controller
         $categories = Category::all();
         return view('chef.menu-management', compact('meals', 'categories'));
     }
-    public function adminMenu()
-    {
-        $meals = Meal::paginate(12);
-        $categories = Category::all();
-        return view('admin.menu-management', compact('meals', 'categories'));
-    }
 
     public function createMeal(Request $request)
     {

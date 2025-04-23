@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserAuthController;
 use App\Http\Controllers\CLientController;
 use App\Http\Controllers\MealController;
+use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Middleware\RoleClient;
 use App\Http\Middleware\RoleChef;
@@ -43,12 +44,13 @@ Route::middleware('auth')->group(function () {
 
     // admin routes
     Route::middleware(RoleAdmin::class)->group(function () {
-        Route::get('admin/menu-management', [MealController::class, 'adminMenu'])->name('menu-management');
-
+        Route::get('admin/dashboard', [AdminController::class, 'showDashboard'])->name('dashboard');
+        Route::get('admin/menu-management', [AdminController::class, 'adminMenu'])->name('menu-management');
         Route::delete('admin/delete-meal/{id}', [MealController::class, 'deleteMeal'])->name('admin-delete-meal');
         Route::put('admin/update-meal/{id}', [MealController::class, 'updateMeal'])->name('admin-update-meal');
-
-
+        Route::get('admin/user-management', [AdminController::class, 'adminUsers'])->name('user-management');
+        Route::post('admin/promote-to-chef', [AdminController::class, 'promoteToChef'])->name('promote-to-chef');
+        Route::delete('admin/delete-user/{id}', [AdminController::class, 'deleteUser'])->name('delete-user');
     });
 });
 
@@ -71,14 +73,10 @@ Route::get('order-tracking', function () {
 
 
 
-Route::get('admin/dashboard', function () {
-    return view('admin.dashboard');
-})->name('dashboard');
 
 
-Route::get('admin/user-management', function () {
-    return view('admin.user-management');
-})->name('user-management');
+
+
 
 Route::get('admin/settings', function () {
     return view('admin.settings');

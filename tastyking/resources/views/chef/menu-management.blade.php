@@ -3,12 +3,17 @@
 @section('content')
 
     <div class="admin-user-management">
+        @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+        @endif
         <div class="header-container">
             <div class="header-content">
                 <h1>Menu Management</h1>
                 <p class="management-description">Manage your restaurant's menu items</p>
             </div>
-            <button class="add-item-btn" id="addNewItemBtn"><i class="fas fa-plus"></i> Add New Item</button>
+            <button class="add-item-btn" onclick="showModal('addItemModal')"><i class="fas fa-plus"></i> Add New Item</button>
         </div>
 
         <div class="menu-controls">
@@ -19,11 +24,9 @@
             <div class="category-filter">
                 <select class="category-select">
                     <option value="all">All Categories</option>
-                    <option value="main-course">Main course</option>
-                    <option value="salad">Salad</option>
-                    <option value="vegetarian">Vegetarian</option>
-                    <option value="pizza">Pizza</option>
-                    <option value="desserts">Desserts</option>
+                    @foreach($categories as $category)
+                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                    @endforeach
                 </select>
             </div>
         </div>
@@ -32,133 +35,71 @@
     <hr>
 
     <div class="menu-items">
-        <div class="menu-item-card" data-item-id="1">
+    @if ($meals->isEmpty())
+        <p>No meals found.</p>
+    @else
+        @foreach ($meals as $meal)
+        <div class="menu-item-card">
             <div class="item-image">
-                <img src="{{ asset('images/sandwish.png') }}" alt="Classic Burger Pomodoro">
+                <img src="{{ asset('storage/' . $meal->image) }}">
             </div>
             <div class="item-details">
-                <h3 class="item-name">Classic Burger Pomodoro</h3>
+                <h3 class="item-name">{{ $meal->name }}</h3>
                 <div class="item-actions">
-                    <button class="edit-btn">Edit</button>
-                    <button class="remove-btn">Remove</button>
+                    <button type="button" class="edit-btn" onclick="showModal('editModal-{{ $meal->id }}')">Edit</button>
+                    <button type="button" class="remove-btn" onclick="showDeleteConfirmation({{ $meal->id }})">Remove</button>
                 </div>
             </div>
         </div>
-
-        <div class="menu-item-card" data-item-id="2">
-            <div class="item-image">
-                <img src="{{ asset('images/sandwish.png') }}" alt="Cheese Burger">
-            </div>
-            <div class="item-details">
-                <h3 class="item-name">Cheese Burger</h3>
-                <div class="item-actions">
-                    <button class="edit-btn">Edit</button>
-                    <button class="remove-btn">Remove</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="menu-item-card" data-item-id="3">
-            <div class="item-image">
-                <img src="{{ asset('images/sandwish.png') }}" alt="Veggie Burger">
-            </div>
-            <div class="item-details">
-                <h3 class="item-name">Veggie Burger</h3>
-                <div class="item-actions">
-                    <button class="edit-btn">Edit</button>
-                    <button class="remove-btn">Remove</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="menu-item-card" data-item-id="4">
-            <div class="item-image">
-                <img src="{{ asset('images/sandwish.png') }}" alt="Margherita Pizza">
-            </div>
-            <div class="item-details">
-                <h3 class="item-name">Margherita Pizza</h3>
-                <div class="item-actions">
-                    <button class="edit-btn">Edit</button>
-                    <button class="remove-btn">Remove</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="menu-item-card" data-item-id="5">
-            <div class="item-image">
-                <img src="{{ asset('images/sandwish.png') }}" alt="Pepperoni Pizza">
-            </div>
-            <div class="item-details">
-                <h3 class="item-name">Pepperoni Pizza</h3>
-                <div class="item-actions">
-                    <button class="edit-btn">Edit</button>
-                    <button class="remove-btn">Remove</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="menu-item-card" data-item-id="6">
-            <div class="item-image">
-                <img src="{{ asset('images/sandwish.png') }}" alt="Chocolate Cake">
-            </div>
-            <div class="item-details">
-                <h3 class="item-name">Chocolate Cake</h3>
-                <div class="item-actions">
-                    <button class="edit-btn">Edit</button>
-                    <button class="remove-btn">Remove</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="menu-item-card" data-item-id="7">
-            <div class="item-image">
-                <img src="{{ asset('images/sandwish.png') }}" alt="Ice Cream">
-            </div>
-            <div class="item-details">
-                <h3 class="item-name">Ice Cream</h3>
-                <div class="item-actions">
-                    <button class="edit-btn">Edit</button>
-                    <button class="remove-btn">Remove</button>
-                </div>
-            </div>
-        </div>
+        @endforeach
+    @endif
     </div>
 
     <hr style="margin-bottom: 4rem">
 
 
-    <div id="editModal" class="modal">
+    @foreach($meals as $meal)
+    <div id="editModal-{{ $meal->id }}" class="modal">
         <div class="modal-overlay"></div>
         <div class="modal-content">
             <h2>Edit Item</h2>
 
-            <form id="editItemForm" method="POST" action="" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('update-meal', $meal->id) }}" enctype="multipart/form-data">
                 @csrf
-                <input type="hidden" name="item_id" id="itemId">
+                @method('PUT')
+                @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+                @endif
 
                 <div class="item-image-container">
-                    <div class="item-image-preview" id="imagePreviewContainer">
-                        <img id="previewImage" src="{{ asset('images/sandwish.png') }}" alt="Item Preview">
+                    <label for="itemImage">Image</label>
+                    <div class="item-image-box upload-placeholder">
+                        <span class="upload-text">Click to select a new image</span>
+                        <input type="file" name="image" id="itemImage" class="form-input" accept="image/*">
                     </div>
                     <p class="image-info">Recommended: 600x400px, Maximum size: 2MB</p>
-                    <input type="file" name="item_image" id="itemImage" class="image-upload" accept="image/*">
-                    <label for="itemImage" class="upload-btn">Choose Image</label>
                 </div>
 
                 <div class="form-group">
                     <label for="itemTitle">Title</label>
-                    <input type="text" name="title" id="itemTitle" class="form-input" placeholder="Enter item title" required>
+                    <input type="text" name="name" class="form-input" value="{{ old('name', $meal->name) }}" placeholder="{{ $meal->name }}" required>
                 </div>
 
                 <div class="form-group">
                     <label for="itemDescription">Description</label>
-                    <textarea name="description" id="itemDescription" class="form-textarea" placeholder="Enter item description" required></textarea>
+                    <textarea name="description" class="form-textarea" placeholder="{{ $meal->description }}" required>{{ old('description', $meal->description) }}</textarea>
                 </div>
 
                 <div class="form-group">
                     <label for="itemPrice">Price</label>
                     <div class="price-input-container">
-                        <input type="number" name="price" id="itemPrice" class="form-input" placeholder="Enter price" step="0.01" min="0" required>
+                        <input type="number" name="price" class="form-input" value="{{ old('price', $meal->price) }}" placeholder="{{ $meal->price }}" step="0.01" min="0" required>
                         <span class="currency">dh</span>
                     </div>
                 </div>
@@ -167,21 +108,37 @@
                     <label for="itemCategory">Category</label>
                     <select name="category_id" id="itemCategory" class="form-input" required>
                         <option value="">Select a category</option>
-                        <option value="1">Burgers</option>
-                        <option value="2">Pizza</option>
-                        <option value="3">Pasta</option>
-                        <option value="4">Desserts</option>
-                        <option value="5">Drinks</option>
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}" {{ old('category_id', $meal->category_id) == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                        @endforeach
                     </select>
                 </div>
 
                 <div class="modal-actions">
                     <button type="submit" id="saveChangesBtn" class="save-btn">Save Changes</button>
-                    <button type="button" id="cancelEditBtn" class="cancel-btn">Cancel</button>
+                    <button type="button" class="cancel-btn" onclick="closeModal('editModal-{{ $meal->id }}')">Cancel</button>
                 </div>
             </form>
         </div>
     </div>
+
+    <div id="deleteConfirmation-{{ $meal->id }}" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content delete-confirmation">
+            <h2>Confirm Deletion</h2>
+            <p>Are you sure you want to delete "{{ $meal->name }}"? This action cannot be undone.</p>
+
+            <div class="modal-actions">
+                <form method="POST" action="{{ route('delete-meal', $meal->id) }}">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="delete-btn">Yes, Delete</button>
+                </form>
+                <button type="button" class="cancel-btn" onclick="closeModal('deleteConfirmation-{{ $meal->id }}')">Cancel</button>
+            </div>
+        </div>
+    </div>
+    @endforeach
 
 
     <div id="addItemModal" class="modal">
@@ -189,21 +146,31 @@
         <div class="modal-content">
             <h2>Add New Item</h2>
 
-            <form id="addItemForm" method="POST" action="" enctype="multipart/form-data">
+            <form id="addItemForm" method="POST" action="{{ route('create-meal') }}" enctype="multipart/form-data">
                 @csrf
+                @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+                @endif
 
                 <div class="item-image-container">
-                    <div class="item-image-preview upload-placeholder" id="newImagePreviewContainer">
-                        <img id="newItemPreviewImage" src="{{ asset('images/upload.png') }}" alt="Upload Image">
+                    <label for="newItemImage">Image</label>
+                    <div class="item-image-box upload-placeholder">
+                        <img src="{{ asset('images/upload.png') }}" alt="Upload Image" class="upload-icon">
+                        <span class="upload-text">Click to upload an image</span>
+                        <input type="file" name="image" id="newItemImage" class="form-input" accept="image/*">
                     </div>
                     <p class="image-info">Recommended: 600x400px, Maximum size: 2MB</p>
-                    <input type="file" name="item_image" id="newItemImage" class="image-upload" accept="image/*">
-                    <label for="newItemImage" class="upload-btn">Choose Image</label>
                 </div>
 
                 <div class="form-group">
                     <label for="newItemTitle">Title</label>
-                    <input type="text" name="title" id="newItemTitle" class="form-input" placeholder="Enter item title" required>
+                    <input type="text" name="name" id="newItemTitle" class="form-input" placeholder="Enter item title" required>
                 </div>
 
                 <div class="form-group">
@@ -223,17 +190,15 @@
                     <label for="newItemCategory">Category</label>
                     <select name="category_id" id="newItemCategory" class="form-input" required>
                         <option value="">Select a category</option>
-                        <option value="1">Burgers</option>
-                        <option value="2">Pizza</option>
-                        <option value="3">Pasta</option>
-                        <option value="4">Desserts</option>
-                        <option value="5">Drinks</option>
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                        @endforeach
                     </select>
                 </div>
 
                 <div class="modal-actions">
                     <button type="submit" id="addItemBtn" class="save-btn">Add Item</button>
-                    <button type="button" id="cancelAddBtn" class="cancel-btn">Cancel</button>
+                    <button type="button" class="cancel-btn" onclick="closeModal('addItemModal')">Cancel</button>
                 </div>
             </form>
         </div>
@@ -243,6 +208,30 @@
 @endsection
 
 <style>
+    .alert {
+        padding: 15px;
+        margin-bottom: 20px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+    }
+
+    .alert-danger {
+        color: #721c24;
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+    }
+
+    .alert-success {
+        color: #155724;
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+    }
+
+    .alert ul {
+        margin: 0;
+        padding-left: 20px;
+    }
+
     .admin-user-management {
         padding: 4rem 2rem;
     }
@@ -423,7 +412,7 @@
         gap: 0.5rem;
     }
 
-    .edit-btn, .remove-btn {
+    .edit-btn, .remove-btn, a.edit-btn {
         padding: 0.5rem 1rem;
         border: none;
         border-radius: 20px;
@@ -434,13 +423,16 @@
         font-family: 'Poppins', sans-serif;
     }
 
-    .edit-btn {
+    .edit-btn, a.edit-btn {
+        display: inline-block;
+        text-align: center;
+        text-decoration: none;
         background-color: #ffb30e6e;
         color: #333;
         flex: 1;
     }
 
-    .edit-btn:hover {
+    .edit-btn:hover, a.edit-btn:hover {
         background-color: #e0e0e0;
     }
 
@@ -501,14 +493,15 @@
         font-family: 'Poppins', sans-serif;
     }
 
+
+
     .item-image-container {
         margin-bottom: 1.5rem;
     }
 
-    .item-image-preview {
+    .item-image-box {
         width: 100%;
         height: 150px;
-        overflow: hidden;
         border-radius: 10px;
         margin-bottom: 0.5rem;
         border: 2px dashed #ccc;
@@ -516,75 +509,41 @@
         justify-content: center;
         align-items: center;
         position: relative;
+        background-color: #f5f5f5;
     }
 
     .upload-placeholder {
-        background-color: #f5f5f5;
         flex-direction: column;
         text-align: center;
     }
 
-    .upload-placeholder img {
-        width: 60px !important;
-        height: 60px !important;
-        object-fit: contain !important;
+    .upload-icon {
+        width: 60px;
+        height: 60px;
+        object-fit: contain;
         margin-bottom: 10px;
     }
 
-    .upload-placeholder::after {
-        content: 'Click to upload or drag and drop\A PNG, JPG, JPEG up to 2MB';
-        white-space: pre;
-        font-size: 0.8rem;
-        color: #666;
-        text-align: center;
-        margin-top: 5px;
-    }
-
-    .upload-placeholder::before {
-        content: 'Click to upload';
+    .upload-text {
         color: #FF7A50;
         font-weight: 500;
         font-size: 0.9rem;
-        margin-bottom: 5px;
     }
 
-    .item-image-preview img {
+    .item-image-box input[type="file"] {
+        position: absolute;
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        cursor: pointer;
     }
 
     .image-info {
         font-size: 0.8rem;
         color: #666;
-        margin-bottom: 0.5rem;
-        text-align: center;
-    }
-
-    .image-upload {
-        position: absolute;
-        width: 0.1px;
-        height: 0.1px;
-        opacity: 0;
-        overflow: hidden;
-        z-index: -1;
-    }
-
-    .upload-btn {
-        display: block;
-        width: 100%;
-        padding: 0.5rem;
-        background-color: #f5f5f5;
-        color: #333;
-        text-align: center;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-        font-size: 0.9rem;
-    }
-
-    .upload-btn:hover {
-        background-color: #e0e0e0;
+        margin-top: 0.25rem;
     }
 
     .form-group {
@@ -597,6 +556,34 @@
         margin-bottom: 0.5rem;
         color: #333;
         font-family: 'Poppins', sans-serif;
+    }
+
+    .delete-confirmation {
+        text-align: center;
+    }
+
+    .delete-confirmation p {
+        margin-bottom: 1.5rem;
+        color: #555;
+        font-size: 1rem;
+    }
+
+    .delete-btn {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 20px;
+        padding: 0.5rem 1.5rem;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        font-family: 'Poppins', sans-serif;
+        margin-right: 1rem;
+    }
+
+    .delete-btn:hover {
+        background-color: #c82333;
     }
 
     .form-input, .form-textarea {
@@ -667,120 +654,54 @@
 
 </style>
 
-<!-- Common Utility Functions -->
 <script>
-    // Helper function to close a modal
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const successAlert = document.querySelector('.alert-success');
+        if (successAlert) {
+            setTimeout(function() {
+                successAlert.style.opacity = '0';
+                successAlert.style.transition = 'opacity 0.5s';
+                setTimeout(function() {
+                    successAlert.style.display = 'none';
+                }, 500);
+            }, 3000);
+        }
+    });
+
     function closeModal(modal) {
+        modal.classList.remove('show');
+        document.body.style.overflow = 'auto';
+    }
+
+
+</script>
+
+<script>
+    // Function to show a modal
+    function showModal(modalId) {
+        const modal = document.getElementById(modalId);
+        modal.classList.add('show');
+        document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    }
+
+    // Function to close a modal
+    function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
         modal.classList.remove('show');
         document.body.style.overflow = 'auto'; // Re-enable scrolling
     }
 
-    // Helper function to handle file uploads and preview
-    function handleImageUpload(inputElement, previewElement) {
-        if (!inputElement) return;
-
-        inputElement.addEventListener('change', function() {
-            const file = this.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    previewElement.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
+    // Function to show delete confirmation
+    function showDeleteConfirmation(mealId) {
+        showModal('deleteConfirmation-' + mealId);
     }
+
+
 </script>
 
-<!-- Edit Item Modal Script -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Get edit modal elements
-        const editModal = document.getElementById('editModal');
-        const editButtons = document.querySelectorAll('.edit-btn');
-        const cancelEditBtn = document.getElementById('cancelEditBtn');
 
-        // File upload preview for edit item
-        const itemImage = document.getElementById('itemImage');
-        const previewImage = document.getElementById('previewImage');
 
-        // Initialize image upload handler
-        handleImageUpload(itemImage, previewImage);
 
-        // Open edit modal when edit button is clicked
-        editButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                // Get the item data from the card
-                const card = this.closest('.menu-item-card');
-                const itemId = card.dataset.itemId;
-                const itemName = card.querySelector('.item-name').textContent;
-                const itemImage = card.querySelector('.item-image img').src;
-
-                // Set form values for editing
-                document.getElementById('itemId').value = itemId;
-                document.getElementById('itemTitle').value = itemName;
-
-                // Set the image preview to the item's image
-                previewImage.src = itemImage;
-                previewImage.alt = itemName;
-
-                // Remove upload placeholder styling if it exists
-                const imagePreviewContainer = document.getElementById('imagePreviewContainer');
-                imagePreviewContainer.classList.remove('upload-placeholder');
-
-                // Show the edit modal
-                editModal.classList.add('show');
-                document.body.style.overflow = 'hidden'; // Prevent background scrolling
-            });
-        });
-
-        // Close edit modal when cancel button is clicked
-        cancelEditBtn.addEventListener('click', function() {
-            closeModal(editModal);
-        });
-    });
-</script>
-
-<!-- Add New Item Modal Script -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Get add new item modal elements
-        const addItemModal = document.getElementById('addItemModal');
-        const addNewItemBtn = document.getElementById('addNewItemBtn');
-        const cancelAddBtn = document.getElementById('cancelAddBtn');
-
-        // File upload preview for add new item
-        const newItemImage = document.getElementById('newItemImage');
-        const newItemPreviewImage = document.getElementById('newItemPreviewImage');
-
-        // Initialize image upload handler
-        handleImageUpload(newItemImage, newItemPreviewImage);
-
-        // Open add new item modal when Add New Item button is clicked
-        addNewItemBtn.addEventListener('click', function() {
-            // Show the add item modal
-            addItemModal.classList.add('show');
-            document.body.style.overflow = 'hidden'; // Prevent background scrolling
-        });
-
-        // Close add item modal when cancel button is clicked
-        cancelAddBtn.addEventListener('click', function() {
-            closeModal(addItemModal);
-        });
-    });
-</script>
-
-<!-- Modal Overlay Click Handler -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Close modals when clicking outside the modal content
-        document.addEventListener('click', function(event) {
-            if (event.target.classList.contains('modal') || event.target.classList.contains('modal-overlay')) {
-                const modal = event.target.closest('.modal') || event.target;
-                closeModal(modal);
-            }
-        });
-    });
-</script>
 
 

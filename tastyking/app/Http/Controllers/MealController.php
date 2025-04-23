@@ -11,19 +11,19 @@ class MealController extends Controller
 {
     public function clientMenu()
     {
-        $meals = Meal::all();
+        $meals = Meal::paginate(12);
         $categories = Category::all();
         return view('menu', compact('meals', 'categories'));
     }
     public function chefMenu()
     {
-        $meals = Meal::all();
+        $meals = Meal::paginate(12)->withPath('');
         $categories = Category::all();
         return view('chef.menu-management', compact('meals', 'categories'));
     }
     public function adminMenu()
     {
-        $meals = Meal::all();
+        $meals = Meal::paginate(12);
         $categories = Category::all();
         return view('admin.menu-management', compact('meals', 'categories'));
     }

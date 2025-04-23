@@ -57,6 +57,11 @@
 
     <hr style="margin-bottom: 4rem">
 
+    <div class="pagination-container">
+        {{ $meals->links('vendor.pagination.custom') }}
+    </div>
+
+
 
     @foreach($meals as $meal)
     <div id="editModal-{{ $meal->id }}" class="modal">
@@ -358,7 +363,7 @@
     .menu-items {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        gap: 2rem;
+        gap: 5rem;
         padding: 2rem;
         margin: 0 auto 2rem auto;
         width: 90%;
@@ -650,6 +655,64 @@
 
     .cancel-btn:hover {
         background-color: #e0e0e0;
+    }
+
+    /* Pagination Styles */
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        margin: 1rem auto 3rem;
+        width: 90%;
+    }
+
+    .custom-pagination {
+        display: flex;
+        list-style: none;
+        padding: 0.5rem;
+        margin: 0;
+        gap: 0.5rem;
+        box-shadow: 4px 5px 8px #ffb30e85;
+        border-radius: 15px;
+        background-color: white;
+    }
+
+    .custom-pagination li {
+        display: inline-block;
+    }
+
+    .custom-pagination li a, .custom-pagination li span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 40px;
+        height: 40px;
+        border-radius: 15px;
+        padding: 0 10px;
+        background-color: #FFF8DC;
+        color: #333;
+        text-decoration: none;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 500;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+
+    .custom-pagination li.active span {
+        background-color: #FF7A50;
+        color: white;
+        box-shadow: 0 4px 8px rgba(255, 122, 80, 0.3);
+    }
+
+    .custom-pagination li a:hover {
+        background-color: #ffb30e6e;
+        color: #333;
+        transform: translateY(-2px);
+    }
+
+    .custom-pagination li.disabled span {
+        color: #999;
+        background-color: #f8f8f8;
+        cursor: not-allowed;
     }
 
 </style>

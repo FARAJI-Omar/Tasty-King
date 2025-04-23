@@ -3,9 +3,19 @@
        <div class="header">
 
             <div class="logo">
-              <a href="{{ route('welcome') }}">
+            @if(!Auth::user() ||Auth::user()->role == 'client')
+            <a href="{{ route('welcome') }}">
+                <img class="icon" src="{{ asset('images/logo tastyking.png')}}"></img>
+            </a>
+            @elseif(Auth::user()->role == 'chef')
+              <a href="{{ route('chef.menu-management') }}">
                 <img class="icon" src="{{ asset('images/logo tastyking.png')}}"></img>
               </a>
+            @elseif(Auth::user()->role == 'admin')
+              <a href="{{ route('dashboard') }}">
+                <img class="icon" src="{{ asset('images/logo tastyking.png')}}"></img>
+              </a>
+            @endif
             </div>
 
 
@@ -28,11 +38,14 @@
                             <img src="{{ asset('images/profile.png') }}" alt="Profile" class="profile-image">
                         @endif
                     </button>
+
                     <div id="profile-dropdown" class="profile-dropdown">
+                    @if(Auth::user()->role == 'client')
                         <a href="{{ route('profile') }}" class="dropdown-item"><i class="fa-solid fa-user" style="margin-right: 8px;"></i>Profile</a>
                         <a href="{{ route('order-tracking') }}" class="dropdown-item"><i class="fa-solid fa-bag-shopping" style="margin-right: 8px;"></i>Orders</a>
                         <a href="{{ route('menu') }}" class="dropdown-item"><i class="fa-solid fa-list" style="margin-right: 8px;"></i>Menu</a>
                         <hr>
+                    @endif
                         <a href="{{ route('logout') }}" class="dropdown-item"><i class="fa-solid fa-right-from-bracket" style="margin-right: 8px;"></i>Logout</a>
                     </div>
                 </div>

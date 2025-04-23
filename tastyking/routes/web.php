@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserAuthController;
 use App\Http\Controllers\CLientController;
+use App\Http\Controllers\MealController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Middleware\RoleClient;
 use App\Http\Middleware\RoleChef;
@@ -24,9 +25,7 @@ Route::middleware('auth')->group(function () {
 
     // client routes
     Route::middleware(RoleClient::class)->group(function () {
-        Route::get('menu', function () {
-            return view('menu');
-        })->name('menu');
+        Route::get('menu', [MealController::class, 'clientMenu'])->name('menu');
 
         Route::get('profile', [CLientController::class, 'showProfile'])->name('profile');
         Route::put('profile/update-info', [CLientController::class, 'editPersonalInfo'])->name('profile.update-info');
@@ -36,9 +35,10 @@ Route::middleware('auth')->group(function () {
 
     // chef routes
     Route::middleware(RoleChef::class)->group(function () {
-        Route::get('chef/menu-management', function () {
-            return view('chef.menu-management');
-        })->name('chef-menu-management');
+        Route::get('chef/menu-management', [MealController::class, 'chefMenu'])->name('chef.menu-management');
+        Route::post('chef/create-meal', [MealController::class, 'createMeal'])->name('create-meal');
+        Route::put('chef/update-meal/{id}', [MealController::class, 'updateMeal'])->name('update-meal');
+        Route::delete('chef/delete-meal/{id}', [MealController::class, 'deleteMeal'])->name('delete-meal');
     });
 
     // admin routes
@@ -70,9 +70,7 @@ Route::get('admin/dashboard', function () {
     return view('admin.dashboard');
 })->name('dashboard');
 
-Route::get('admin/menu-management', function () {
-    return view('admin.menu-management');
-})->name('menu-management');
+Route::get('admin/menu-management', [MealController::class, 'adminMenu'])->name('menu-management');
 
 Route::get('admin/user-management', function () {
     return view('admin.user-management');

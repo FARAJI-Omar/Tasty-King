@@ -15,11 +15,9 @@
             <div class="category-filter">
                 <select class="category-select">
                     <option value="all">All Categories</option>
-                    <option value="main-course">Main course</option>
-                    <option value="salad">Salad</option>
-                    <option value="vegetarian">Vegetarian</option>
-                    <option value="pizza">Pizza</option>
-                    <option value="desserts">Desserts</option>
+                    @foreach($categories as $category)
+                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                    @endforeach
                 </select>
             </div>
         </div>
@@ -171,11 +169,9 @@
                     <label for="itemCategory">Category</label>
                     <select name="category_id" id="itemCategory" class="form-input" required>
                         <option value="">Select a category</option>
-                        <option value="1">Burgers</option>
-                        <option value="2">Pizza</option>
-                        <option value="3">Pasta</option>
-                        <option value="4">Desserts</option>
-                        <option value="5">Drinks</option>
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                        @endforeach
                     </select>
                 </div>
 

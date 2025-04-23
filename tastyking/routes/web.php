@@ -43,7 +43,12 @@ Route::middleware('auth')->group(function () {
 
     // admin routes
     Route::middleware(RoleAdmin::class)->group(function () {
-        //
+        Route::get('admin/menu-management', [MealController::class, 'adminMenu'])->name('menu-management');
+
+        Route::delete('admin/delete-meal/{id}', [MealController::class, 'deleteMeal'])->name('admin-delete-meal');
+        Route::put('admin/update-meal/{id}', [MealController::class, 'updateMeal'])->name('admin-update-meal');
+
+
     });
 });
 
@@ -70,7 +75,6 @@ Route::get('admin/dashboard', function () {
     return view('admin.dashboard');
 })->name('dashboard');
 
-Route::get('admin/menu-management', [MealController::class, 'adminMenu'])->name('menu-management');
 
 Route::get('admin/user-management', function () {
     return view('admin.user-management');

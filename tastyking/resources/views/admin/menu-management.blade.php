@@ -4,6 +4,20 @@
 
 @push('admin-content')
     <div class="admin-user-management">
+        @if (session('success'))
+        <div class="alert alert-success">
+            <i class="fas fa-check-circle alert-icon"></i>
+            <div class="alert-message">{{ session('success') }}</div>
+        </div>
+        @endif
+
+        @if (session('error'))
+        <div class="alert alert-danger">
+            <i class="fas fa-exclamation-circle alert-icon"></i>
+            <div class="alert-message">{{ session('error') }}</div>
+        </div>
+        @endif
+
         <h1>Menu Management</h1>
         <p class="management-description">Manage your restaurant's menu items</p>
 
@@ -26,162 +40,118 @@
     <hr>
 
     <div class="menu-items">
-        <div class="menu-item-card" data-item-id="1">
+    @if ($meals->isEmpty())
+        <p>No meals found.</p>
+    @else
+        @foreach ($meals as $meal)
+        <div class="menu-item-card">
             <div class="item-image">
-                <img src="{{ asset('images/sandwish.png') }}" alt="Classic Burger Pomodoro">
+                <img src="{{ asset('storage/' . $meal->image) }}">
             </div>
             <div class="item-details">
-                <h3 class="item-name">Classic Burger Pomodoro</h3>
+                <h3 class="item-name">{{ $meal->name }}</h3>
                 <div class="item-actions">
-                    <button class="edit-btn">Edit</button>
-                    <button class="remove-btn">Remove</button>
+                    <button type="button" class="edit-btn" onclick="showModal('editModal-{{ $meal->id }}')">Edit</button>
+                    <button type="button" class="remove-btn" onclick="showDeleteConfirmation({{ $meal->id }})">Remove</button>
                 </div>
             </div>
         </div>
+        @endforeach
+    @endif
+    </div>
 
-        <div class="menu-item-card" data-item-id="2">
-            <div class="item-image">
-                <img src="{{ asset('images/sandwish.png') }}" alt="Cheese Burger">
-            </div>
-            <div class="item-details">
-                <h3 class="item-name">Cheese Burger</h3>
-                <div class="item-actions">
-                    <button class="edit-btn">Edit</button>
-                    <button class="remove-btn">Remove</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="menu-item-card" data-item-id="3">
-            <div class="item-image">
-                <img src="{{ asset('images/sandwish.png') }}" alt="Veggie Burger">
-            </div>
-            <div class="item-details">
-                <h3 class="item-name">Veggie Burger</h3>
-                <div class="item-actions">
-                    <button class="edit-btn">Edit</button>
-                    <button class="remove-btn">Remove</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="menu-item-card" data-item-id="4">
-            <div class="item-image">
-                <img src="{{ asset('images/sandwish.png') }}" alt="Margherita Pizza">
-            </div>
-            <div class="item-details">
-                <h3 class="item-name">Margherita Pizza</h3>
-                <div class="item-actions">
-                    <button class="edit-btn">Edit</button>
-                    <button class="remove-btn">Remove</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="menu-item-card" data-item-id="5">
-            <div class="item-image">
-                <img src="{{ asset('images/sandwish.png') }}" alt="Pepperoni Pizza">
-            </div>
-            <div class="item-details">
-                <h3 class="item-name">Pepperoni Pizza</h3>
-                <div class="item-actions">
-                    <button class="edit-btn">Edit</button>
-                    <button class="remove-btn">Remove</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="menu-item-card" data-item-id="6">
-            <div class="item-image">
-                <img src="{{ asset('images/sandwish.png') }}" alt="Chocolate Cake">
-            </div>
-            <div class="item-details">
-                <h3 class="item-name">Chocolate Cake</h3>
-                <div class="item-actions">
-                    <button class="edit-btn">Edit</button>
-                    <button class="remove-btn">Remove</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="menu-item-card" data-item-id="7">
-            <div class="item-image">
-                <img src="{{ asset('images/sandwish.png') }}" alt="Ice Cream">
-            </div>
-            <div class="item-details">
-                <h3 class="item-name">Ice Cream</h3>
-                <div class="item-actions">
-                    <button class="edit-btn">Edit</button>
-                    <button class="remove-btn">Remove</button>
-                </div>
-            </div>
-        </div>
+    <div class="pagination-container">
+        {{ $meals->links('vendor.pagination.custom') }}
     </div>
 
     <hr style="margin-bottom: 4rem">
 
 
-    <div id="editModal" class="modal">
+    @foreach($meals as $meal)
+    <div id="editModal-{{ $meal->id }}" class="modal">
         <div class="modal-overlay"></div>
         <div class="modal-content">
             <h2>Edit Item</h2>
 
-            <form id="editItemForm" method="POST" action="" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('admin-update-meal', $meal->id) }}" enctype="multipart/form-data">
                 @csrf
-                <input type="hidden" name="item_id" id="itemId">
+                @method('PUT')
+                @if ($errors->any())
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle alert-icon"></i>
+                    <div class="alert-content">
+                        <div class="alert-title">Please fix the following errors:</div>
+                        <ul class="alert-list">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+                @endif
 
                 <div class="item-image-container">
-                    <div class="item-image-preview" id="imagePreviewContainer">
-                        <img id="previewImage" src="{{ asset('images/sandwish.png') }}" alt="Item Preview">
+                    <label for="itemImage-{{ $meal->id }}">Image</label>
+                    <div class="item-image-box upload-placeholder">
+                        <span class="upload-text">Click to select a new image</span>
+                        <input type="file" name="image" id="itemImage-{{ $meal->id }}" class="form-input" accept="image/*">
                     </div>
                     <p class="image-info">Recommended: 600x400px, Maximum size: 2MB</p>
-                    <input type="file" name="item_image" id="itemImage" class="image-upload" accept="image/*">
-                    <label for="itemImage" class="upload-btn">Choose Image</label>
                 </div>
 
                 <div class="form-group">
-                    <label for="itemTitle">Title</label>
-                    <input type="text" name="title" id="itemTitle" class="form-input" placeholder="Enter item title" required>
+                    <label for="itemTitle-{{ $meal->id }}">Title</label>
+                    <input type="text" name="name" id="itemTitle-{{ $meal->id }}" class="form-input" value="{{ old('name', $meal->name) }}" placeholder="{{ $meal->name }}" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="itemDescription">Description</label>
-                    <textarea name="description" id="itemDescription" class="form-textarea" placeholder="Enter item description" required></textarea>
+                    <label for="itemDescription-{{ $meal->id }}">Description</label>
+                    <textarea name="description" id="itemDescription-{{ $meal->id }}" class="form-textarea" placeholder="{{ $meal->description }}" required>{{ old('description', $meal->description) }}</textarea>
                 </div>
 
                 <div class="form-group">
-                    <label for="itemPrice">Price</label>
+                    <label for="itemPrice-{{ $meal->id }}">Price</label>
                     <div class="price-input-container">
-                        <input type="number" name="price" id="itemPrice" class="form-input" placeholder="Enter price" step="0.01" min="0" required>
+                        <input type="number" name="price" id="itemPrice-{{ $meal->id }}" class="form-input" value="{{ old('price', $meal->price) }}" placeholder="{{ $meal->price }}" step="0.01" min="0" required>
                         <span class="currency">dh</span>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="itemPromotion">Promotion</label>
-                    <div class="promotion-input-container">
-                        <input type="number" name="promotion" id="itemPromotion" class="form-input" placeholder="Enter promotion percentage" min="0" max="100">
-                        <span class="percentage">%</span>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="itemCategory">Category</label>
-                    <select name="category_id" id="itemCategory" class="form-input" required>
+                    <label for="itemCategory-{{ $meal->id }}">Category</label>
+                    <select name="category_id" id="itemCategory-{{ $meal->id }}" class="form-input" required>
                         <option value="">Select a category</option>
                         @foreach($categories as $category)
-                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                            <option value="{{ $category->id }}" {{ old('category_id', $meal->category_id) == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
                         @endforeach
                     </select>
                 </div>
 
                 <div class="modal-actions">
-                    <button type="submit" id="saveChangesBtn" class="save-btn">Save Changes</button>
-                    <button type="button" id="cancelBtn" class="cancel-btn">Cancel</button>
+                    <button type="submit" class="save-btn">Save Changes</button>
+                    <button type="button" class="cancel-btn" onclick="closeModal('editModal-{{ $meal->id }}')">Cancel</button>
                 </div>
             </form>
         </div>
     </div>
+
+    <div id="deleteConfirmation-{{ $meal->id }}" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content delete-confirmation">
+            <h2>Confirm Deletion</h2>
+            <p>Are you sure you want to delete "{{ $meal->name }}"? This action cannot be undone.</p>
+
+            <div class="modal-actions">
+                <form method="POST" action="{{ route('admin-delete-meal', $meal->id) }}">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="delete-btn">Yes, Delete</button>
+                </form>
+                <button type="button" class="cancel-btn" onclick="closeModal('deleteConfirmation-{{ $meal->id }}')">Cancel</button>
+            </div>
+        </div>
+    </div>
+    @endforeach
 
 
 @endpush
@@ -191,6 +161,74 @@
 @endsection
 
 <style>
+    /* Alert Styles */
+    .alert {
+        display: flex;
+        align-items: flex-start;
+        padding: 15px 20px;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        font-family: 'Poppins', sans-serif;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        position: relative;
+        animation: slideDown 0.3s ease-out forwards;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        border-left: 5px solid #28a745;
+        color: #155724;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        border-left: 5px solid #dc3545;
+        color: #721c24;
+    }
+
+    .alert-icon {
+        font-size: 1.5rem;
+        margin-right: 15px;
+        margin-top: 2px;
+    }
+
+    .alert-message {
+        flex: 1;
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+
+    .alert-content {
+        flex: 1;
+    }
+
+    .alert-title {
+        font-weight: 600;
+        margin-bottom: 5px;
+        font-size: 1rem;
+    }
+
+    .alert-list {
+        margin: 5px 0 0 20px;
+        padding: 0;
+        font-size: 0.9rem;
+    }
+
+    .alert-list li {
+        margin-bottom: 3px;
+    }
+
     .admin-user-management {
         padding: 4rem 2rem;
     }
@@ -415,10 +453,9 @@
         margin-bottom: 1.5rem;
     }
 
-    .item-image-preview {
+    .item-image-box {
         width: 100%;
         height: 150px;
-        overflow: hidden;
         border-radius: 10px;
         margin-bottom: 0.5rem;
         border: 2px dashed #ccc;
@@ -426,45 +463,41 @@
         justify-content: center;
         align-items: center;
         position: relative;
+        background-color: #f5f5f5;
     }
 
-    .item-image-preview img {
+    .upload-placeholder {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .upload-icon {
+        width: 60px;
+        height: 60px;
+        object-fit: contain;
+        margin-bottom: 10px;
+    }
+
+    .upload-text {
+        color: #FF7A50;
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+
+    .item-image-box input[type="file"] {
+        position: absolute;
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        cursor: pointer;
     }
 
     .image-info {
         font-size: 0.8rem;
         color: #666;
-        margin-bottom: 0.5rem;
-        text-align: center;
-    }
-
-    .image-upload {
-        position: absolute;
-        width: 0.1px;
-        height: 0.1px;
-        opacity: 0;
-        overflow: hidden;
-        z-index: -1;
-    }
-
-    .upload-btn {
-        display: block;
-        width: 100%;
-        padding: 0.5rem;
-        background-color: #f5f5f5;
-        color: #333;
-        text-align: center;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-        font-size: 0.9rem;
-    }
-
-    .upload-btn:hover {
-        background-color: #e0e0e0;
+        margin-top: 0.25rem;
     }
 
     .form-group {
@@ -477,6 +510,34 @@
         margin-bottom: 0.5rem;
         color: #333;
         font-family: 'Poppins', sans-serif;
+    }
+
+    .delete-confirmation {
+        text-align: center;
+    }
+
+    .delete-confirmation p {
+        margin-bottom: 1.5rem;
+        color: #555;
+        font-size: 1rem;
+    }
+
+    .delete-btn {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 20px;
+        padding: 0.5rem 1.5rem;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        font-family: 'Poppins', sans-serif;
+        margin-right: 1rem;
+    }
+
+    .delete-btn:hover {
+        background-color: #c82333;
     }
 
     .form-input, .form-textarea {
@@ -544,42 +605,99 @@
         background-color: #e0e0e0;
     }
 
+        /* Pagination Styles */
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        margin: 1rem auto 3rem;
+        width: 90%;
+    }
+
+    .custom-pagination {
+        display: flex;
+        list-style: none;
+        padding: 0.5rem;
+        margin: 0;
+        gap: 0.5rem;
+        box-shadow: 4px 5px 8px #ffb30e85;
+        border-radius: 15px;
+        background-color: white;
+    }
+
+    .custom-pagination li {
+        display: inline-block;
+    }
+
+    .custom-pagination li a, .custom-pagination li span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 40px;
+        height: 40px;
+        border-radius: 15px;
+        padding: 0 10px;
+        background-color: #FFF8DC;
+        color: #333;
+        text-decoration: none;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 500;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+
+    .custom-pagination li.active span {
+        background-color: #FF7A50;
+        color: white;
+        box-shadow: 0 4px 8px rgba(255, 122, 80, 0.3);
+    }
+
+    .custom-pagination li a:hover {
+        background-color: #ffb30e6e;
+        color: #333;
+        transform: translateY(-2px);
+    }
+
+    .custom-pagination li.disabled span {
+        color: #999;
+        background-color: #f8f8f8;
+        cursor: not-allowed;
+    }
+
 </style>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Get modal elements
-        const modal = document.getElementById('editModal');
-        const editButtons = document.querySelectorAll('.edit-btn');
-        const cancelBtn = document.getElementById('cancelBtn');
-
-        // Open modal when edit button is clicked
-        editButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                // Show the modal
-                modal.classList.add('show');
-                document.body.style.overflow = 'hidden'; // Prevent background scrolling
-            });
-        });
-
-        // Close modal when cancel button is clicked
-        cancelBtn.addEventListener('click', function() {
-            closeModal();
-        });
-
-        // Close modal when clicking outside the modal content
-        modal.addEventListener('click', function(event) {
-            if (event.target === modal || event.target.classList.contains('modal-overlay')) {
-                closeModal();
-            }
-        });
-
-        // Helper function to close the modal
-        function closeModal() {
-            modal.classList.remove('show');
-            document.body.style.overflow = 'auto'; // Re-enable scrolling
+        // Auto-hide success messages after 3 seconds
+        const successAlert = document.querySelector('.alert-success');
+        if (successAlert) {
+            setTimeout(function() {
+                successAlert.style.opacity = '0';
+                successAlert.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                successAlert.style.transform = 'translateY(-20px)';
+                setTimeout(function() {
+                    successAlert.style.display = 'none';
+                }, 500);
+            }, 3000);
         }
     });
+
+    function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        modal.classList.remove('show');
+        document.body.style.overflow = 'auto';
+    }
+
+    // Function to show a modal
+    function showModal(modalId) {
+        const modal = document.getElementById(modalId);
+        modal.classList.add('show');
+        document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    }
+
+    // Function to show delete confirmation
+    function showDeleteConfirmation(mealId) {
+        showModal('deleteConfirmation-' + mealId);
+    }
 </script>
 
 

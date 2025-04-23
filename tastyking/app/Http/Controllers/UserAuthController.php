@@ -81,7 +81,7 @@ class UserAuthController extends Controller
         if ($user->role === 'client') {
             return redirect()->route('menu');
         } elseif ($user->role === 'chef') {
-            return redirect()->route('chef-menu-management');
+            return redirect()->route('chef.menu-management');
         } elseif ($user->role === 'admin') {
             return redirect()->route('dashboard');
         } else {

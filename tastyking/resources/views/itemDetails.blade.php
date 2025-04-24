@@ -1,18 +1,19 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="img-title">
+<div class="img-title" style="margin: 0 auto;">
     <div class="image">
-        <img src="{{ asset('images/sandwish.png') }}" alt="">
+        <img src="{{ asset('storage/' . $meal->image) }}" alt="{{ $meal->name }}">
     </div>
     <div class="title">
-        <h1>Item title</h1>
-        <h2>53.00 dh</h2>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Alias excepturi porro iure pariatur impedit amet optio velit hic! Quam fugiat eligendi maxime dolorum asperiores nam vel voluptas quia facilis alias.</p>
+        <h1>{{ $meal->name }}</h1>
+        <h2>{{ $meal->price }} dh</h2>
+        <p>{{ $meal->description }}</p>
     </div>
 </div>
 
 <form action="{{ route('cart') }}" method="GET" class="buttons">
+    <input type="hidden" name="meal_id" value="{{ $meal->id }}">
     <div class="size-quantity">
         <div class="size-selection">
             <h3>Select size:</h3>
@@ -20,7 +21,7 @@
                 <input type="radio" id="size-small" name="size" value="small" class="size-radio" hidden>
                 <label for="size-small" class="size-btn">small</label>
 
-                <input type="radio" id="size-regular" name="size" value="regular" class="size-radio" hidden>
+                <input type="radio" id="size-regular" name="size" value="regular" class="size-radio" checked hidden>
                 <label for="size-regular" class="size-btn">regular</label>
 
                 <input type="radio" id="size-big" name="size" value="big" class="size-radio" hidden>
@@ -39,7 +40,7 @@
     <div class="add-tocart">
         <button type="submit" class="cart-btn">
             <i class="fas fa-shopping-cart"></i> Add to cart
-            <span class="price">35.99 dh</span>
+            <span class="price">{{ $meal->price }} dh</span>
         </button>
     </div>
 </form>
@@ -56,11 +57,12 @@
         const decreaseBtn = document.querySelector('.quantity-btn.decrease');
         const increaseBtn = document.querySelector('.quantity-btn.increase');
 
-        if(!Array.from(sizeRadios).some(radio => radio.checked)) {
-            const regularLabel = document.querySelector('label[for="size-regular"]');
-            if(regularLabel) {
-                regularLabel.click();
-            }
+        // Highlight the selected size button (regular by default)
+        const regularLabel = document.querySelector('label[for="size-regular"]');
+        if(regularLabel) {
+            regularLabel.style.backgroundColor = '#FFB30E';
+            regularLabel.style.border = 'black 1px solid';
+            regularLabel.classList.add('active');
         }
 
         sizeLabels.forEach(label => {
@@ -105,17 +107,28 @@
         padding: 2rem;
         margin-top: 40px;
         margin-bottom: 0px;
+        min-height: 400px; /* Fixed minimum height */
     }
 
     .img-title .image{
-        width: 1000px;
-        height: 70%;
+        width: 400px; /* Fixed width */
+        height: 350px; /* Fixed height */
+        flex-shrink: 0; /* Prevent shrinking */
     }
 
     .img-title .image img{
         width: 100%;
         height: 100%;
         object-fit: cover;
+        border-radius: 15px; /* Rounded corners */
+    }
+
+    .title {
+        width: 400px; /* Fixed width */
+        min-height: 300px; /* Minimum height */
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0; /* Prevent shrinking */
     }
 
     .title h1{
@@ -137,7 +150,9 @@
         font-size: 0.9rem;
         font-family: 'Poppins', sans-serif;
         color: #565656;
-        max-width: 80%;
+        max-width: 100%;
+        min-height: 100px; /* Minimum height for description */
+        overflow-y: auto; /* Add scrolling if content is too long */
     }
 
     .buttons {
@@ -148,6 +163,7 @@
         padding: 2rem;
         align-items: flex-start;
         font-family: 'Poppins', sans-serif;
+        margin: 0 auto; /* Center horizontally */
     }
 
     .size-quantity {
@@ -251,6 +267,7 @@
         align-items: center;
         justify-content: center;
         transition: background-color 0.3s ease;
+        margin-left: 7rem;
     }
 
     .cart-btn:hover {

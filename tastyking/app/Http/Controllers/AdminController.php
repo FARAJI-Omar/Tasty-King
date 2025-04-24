@@ -12,14 +12,29 @@ class AdminController extends Controller
 {
     public function showDashboard()
     {
-        return view('admin.dashboard');
+        $totalMeals = Meal::count();
+        $totalUsers = User::count();
+        $activeUsers = User::where('status', 'active')->count();
+        $active = $activeUsers / $totalUsers * 100;
+        return view('admin.dashboard', compact('totalUsers', 'totalMeals', 'active'));
     }
 
-    public function adminMenu()
+    public function adminMenu(Request $request)
     {
-        $meals = Meal::paginate(12);
+        $categoryId = $request->query('category');
+
+        $mealsQuery = Meal::query();
+
+        // Filter by category if a valid category ID is provided
+        if ($categoryId && $categoryId != 'all') {
+            $mealsQuery->where('category_id', $categoryId);
+        }
+
+        $meals = $mealsQuery->paginate(12)->withQueryString();
         $categories = Category::all();
-        return view('admin.menu-management', compact('meals', 'categories'));
+        $selectedCategory = $categoryId;
+
+        return view('admin.menu-management', compact('meals', 'categories', 'selectedCategory'));
     }
 
     public function adminUsers()
@@ -53,5 +68,54 @@ class AdminController extends Controller
         $user->delete();
 
         return redirect()->route('user-management')->with('success', $userName . ' has been deleted successfully!');
+    }
+
+    public function settings()
+    {
+        $categories = Category::all();
+        return view('admin.settings', compact('categories'));
+    }
+
+    public function createCategory(Request $request)
+    {
+        //add new category
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+        Category::create([
+            'name' => $request->name,
+        ]);
+        return redirect()->back()->with('success', 'Category created successfully!');
+    }
+
+    public function deleteCategory($id)
+    {
+        $category = Category::findOrFail($id);
+        $categoryName = $category->name;
+
+        $mealsCount = $category->meals()->count();
+
+        if ($mealsCount > 0) {
+            $otherCategory = Category::firstOrCreate(
+                ['name' => 'Other'],
+                ['name' => 'Other']
+            );
+
+            if ($category->id === $otherCategory->id) {
+                return redirect()->back()
+                    ->with('error', 'Cannot delete the "Other" category!');
+            }
+
+            $category->meals()->update(['category_id' => $otherCategory->id]);
+
+            $message = $mealsCount . ' meal(s) have been moved to the "Other" category.';
+        } else {
+            $message = 'No meals were affected.';
+        }
+
+        $category->delete();
+
+        return redirect()->back()
+            ->with('success', 'Category "' . $categoryName . '" has been deleted successfully! ' . $message);
     }
 }

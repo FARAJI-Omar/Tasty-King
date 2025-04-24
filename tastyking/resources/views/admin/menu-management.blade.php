@@ -27,12 +27,14 @@
             </div>
 
             <div class="category-filter">
-                <select class="category-select">
-                    <option value="all">All Categories</option>
-                    @foreach($categories as $category)
-                        <option value="{{ $category->id }}">{{ $category->name }}</option>
-                    @endforeach
-                </select>
+                <form id="categoryFilterForm" action="{{ route('menu-management') }}" method="GET">
+                    <select class="category-select" name="category" onchange="this.form.submit()">
+                        <option value="all" {{ !isset($selectedCategory) || $selectedCategory == 'all' ? 'selected' : '' }}>All Categories</option>
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}" {{ isset($selectedCategory) && $selectedCategory == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                        @endforeach
+                    </select>
+                </form>
             </div>
         </div>
     </div>

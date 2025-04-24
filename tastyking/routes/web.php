@@ -32,6 +32,7 @@ Route::middleware('auth')->group(function () {
         Route::put('profile/update-info', [CLientController::class, 'editPersonalInfo'])->name('profile.update-info');
         Route::put('profile/update-password', [CLientController::class, 'editPassword'])->name('profile.update-password');
         Route::delete('profile/delete-account', [CLientController::class, 'deleteAccount'])->name('profile.delete-account');
+        Route::get(('item-details/{id}'), [ClientController::class, 'showItemDetails'])->name('item-details');
     });
 
     // chef routes
@@ -51,14 +52,15 @@ Route::middleware('auth')->group(function () {
         Route::get('admin/user-management', [AdminController::class, 'adminUsers'])->name('user-management');
         Route::post('admin/promote-to-chef', [AdminController::class, 'promoteToChef'])->name('promote-to-chef');
         Route::delete('admin/delete-user/{id}', [AdminController::class, 'deleteUser'])->name('delete-user');
+        Route::get('admin/settings', [AdminController::class, 'settings'])->name('settings');
+        Route::post('admin/create-category', [AdminController::class, 'createCategory'])->name('create-category');
+        Route::delete('admin/delete-category/{id}', [AdminController::class, 'deleteCategory'])->name('delete-category');
     });
 });
 
 
 
-Route::get('item-details', function () {
-    return view('itemDetails');
-})->name('item-details');
+
 
 Route::get('cart', function () {
     return view('cart');
@@ -69,15 +71,3 @@ Route::get('checkout', function () {
 Route::get('order-tracking', function () {
     return view('orderTracking');
 })->name('order-tracking');
-
-
-
-
-
-
-
-
-
-Route::get('admin/settings', function () {
-    return view('admin.settings');
-})->name('settings');

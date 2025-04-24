@@ -7,15 +7,15 @@
 </div>
 <hr>
 <div class="categories">
-    <button class="category-btn active" style="opacity: 1;">All</button>
+    <a href="{{ route('menu') }}" class="category-btn {{ !isset($selectedCategory) || $selectedCategory == 'all' ? 'active' : '' }}" style="opacity: {{ !isset($selectedCategory) || $selectedCategory == 'all' ? '1' : '0.6' }};">All</a>
     @foreach($categories as $category)
-        <button class="category-btn" style="opacity: 0.6;">{{ $category->name }}</button>
+        <a href="{{ route('menu', ['category' => $category->id]) }}" class="category-btn {{ isset($selectedCategory) && $selectedCategory == $category->id ? 'active' : '' }}" style="opacity: {{ isset($selectedCategory) && $selectedCategory == $category->id ? '1' : '0.6' }};">{{ $category->name }}</a>
     @endforeach
 </div>
 
 <div class="menu-items">
     @foreach($meals as $meal)
-    <a href="{{ route('item-details') }}" class="item-card">
+    <a href="{{ route('item-details',  $meal->id) }}" class="item-card">
         <img src="{{ asset('storage/' . $meal->image) }}" alt="{{ $meal->name }}">
         <h2>{{ $meal->name }}</h2>
         <p class="item-price">{{ $meal->price }} dh</p>
@@ -30,23 +30,7 @@
 @include('layouts.footer')
 @endsection
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const categoryButtons = document.querySelectorAll('.category-btn');
 
-        categoryButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                categoryButtons.forEach(btn => {
-                    btn.classList.remove('active');
-                    btn.style.opacity = '0.6';
-                });
-
-                this.classList.add('active');
-                this.style.opacity = '1';
-            });
-        });
-    });
-</script>
 
 <style>
     .our_menu {
@@ -99,6 +83,8 @@
         cursor: pointer;
         transition: all 0.3s ease, opacity 0.2s ease;
         opacity: 1;
+        text-decoration: none;
+        display: inline-block;
     }
 
     .category-btn:hover {
@@ -108,9 +94,10 @@
     .menu-items {
         width: 70%;
         justify-self: center;
-        margin-top: 80px;
+        margin: 80px auto;
         display: grid;
         grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
     }
 
     .item-card {
@@ -118,14 +105,20 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        margin: 2rem auto;
+        margin: 0 auto;
         width: 250px;
-    }
-
-    .item-card {
+        height: 300px; /* Fixed height for all cards */
         text-decoration: none;
         cursor: pointer;
         transition: transform 0.3s ease;
+    }
+
+    .item-card img {
+        box-shadow: 2px 6px 12px #FFCC00;
+        border-radius: 15px;
+        width: 250px;
+        height: 200px; /* Fixed height for all images */
+        object-fit: cover;
     }
 
     .item-card:hover {
@@ -148,11 +141,5 @@
         font-family: 'Poppins', sans-serif;
     }
 
-    .item-card img {
-        box-shadow: 2px 6px 12px #FFCC00;
-        border-radius: 15px;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
+
 </style>

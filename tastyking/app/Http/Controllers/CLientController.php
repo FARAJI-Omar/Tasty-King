@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Meal;
 use Illuminate\Support\Facades\Storage;
 
 class CLientController extends Controller
@@ -91,5 +92,11 @@ class CLientController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('welcome')->with('success', 'Your account has been permanently deleted.');
+    }
+
+    public function showItemDetails($id)
+    {  
+        $meal = Meal::findOrFail($id);
+        return view('itemDetails', compact('meal'));
     }
 }

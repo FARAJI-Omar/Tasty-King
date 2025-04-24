@@ -22,12 +22,14 @@
             </div>
 
             <div class="category-filter">
-                <select class="category-select">
-                    <option value="all">All Categories</option>
-                    @foreach($categories as $category)
-                        <option value="{{ $category->id }}">{{ $category->name }}</option>
-                    @endforeach
-                </select>
+                <form id="categoryFilterForm" action="{{ route('chef.menu-management') }}" method="GET">
+                    <select class="category-select" name="category" onchange="this.form.submit()">
+                        <option value="all" {{ !isset($selectedCategory) || $selectedCategory == 'all' ? 'selected' : '' }}>All Categories</option>
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}" {{ isset($selectedCategory) && $selectedCategory == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                        @endforeach
+                    </select>
+                </form>
             </div>
         </div>
     </div>
@@ -44,7 +46,10 @@
                 <img src="{{ asset('storage/' . $meal->image) }}">
             </div>
             <div class="item-details">
-                <h3 class="item-name">{{ $meal->name }}</h3>
+                <div class="flex justify-between">
+                    <h3 class="item-name">{{ $meal->name }}</h3>
+                    <h2>{{ $meal->price }} dh</h2>
+                </div>
                 <div class="item-actions">
                     <button type="button" class="edit-btn" onclick="showModal('editModal-{{ $meal->id }}')">Edit</button>
                     <button type="button" class="remove-btn" onclick="showDeleteConfirmation({{ $meal->id }})">Remove</button>
@@ -730,6 +735,14 @@
                 }, 500);
             }, 3000);
         }
+
+        // Check if there's a category in the URL and filter accordingly
+        const urlParams = new URLSearchParams(window.location.search);
+        const categoryParam = urlParams.get('category');
+        if (categoryParam) {
+            document.getElementById('categoryFilter').value = categoryParam;
+            filterByCategory();
+        }
     });
 
     function closeModal(modal) {
@@ -737,6 +750,46 @@
         document.body.style.overflow = 'auto';
     }
 
+    function filterByCategory() {
+        const categoryId = document.getElementById('categoryFilter').value;
+        const menuItems = document.querySelectorAll('.menu-item-card');
+        const noResultsMessage = document.getElementById('noResultsMessage');
+        let visibleCount = 0;
+
+        // Update URL with the selected category
+        const url = new URL(window.location.href);
+        if (categoryId === 'all') {
+            url.searchParams.delete('category');
+        } else {
+            url.searchParams.set('category', categoryId);
+        }
+        window.history.replaceState({}, '', url);
+
+        menuItems.forEach(item => {
+            if (categoryId === 'all' || item.getAttribute('data-category') === categoryId) {
+                item.style.display = 'block';
+                visibleCount++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        // Show/hide no results message
+        if (visibleCount === 0 && menuItems.length > 0) {
+            if (!noResultsMessage) {
+                const menuItemsContainer = document.querySelector('.menu-items');
+                const message = document.createElement('p');
+                message.id = 'noResultsMessage';
+                message.className = 'no-results';
+                message.textContent = 'No items found in this category.';
+                menuItemsContainer.appendChild(message);
+            } else {
+                noResultsMessage.style.display = 'block';
+            }
+        } else if (noResultsMessage) {
+            noResultsMessage.style.display = 'none';
+        }
+    }
 
 </script>
 

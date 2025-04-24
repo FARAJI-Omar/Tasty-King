@@ -9,17 +9,39 @@ use Illuminate\Support\Facades\Storage;
 
 class MealController extends Controller
 {
-    public function clientMenu()
+    public function clientMenu(Request $request)
     {
-        $meals = Meal::paginate(12);
+        $categoryId = $request->query('category');
+
+        $mealsQuery = Meal::query();
+
+        // Filter by category if a valid category ID is provided
+        if ($categoryId && $categoryId != 'all') {
+            $mealsQuery->where('category_id', $categoryId);
+        }
+
+        $meals = $mealsQuery->paginate(12)->withQueryString();
         $categories = Category::all();
-        return view('menu', compact('meals', 'categories'));
+        $selectedCategory = $categoryId;
+
+        return view('menu', compact('meals', 'categories', 'selectedCategory'));
     }
-    public function chefMenu()
+    public function chefMenu(Request $request)
     {
-        $meals = Meal::paginate(12)->withPath('');
+        $categoryId = $request->query('category');
+
+        $mealsQuery = Meal::query();
+
+        // Filter by category if a valid category ID is provided
+        if ($categoryId && $categoryId != 'all') {
+            $mealsQuery->where('category_id', $categoryId);
+        }
+
+        $meals = $mealsQuery->paginate(12)->withQueryString();
         $categories = Category::all();
-        return view('chef.menu-management', compact('meals', 'categories'));
+        $selectedCategory = $categoryId;
+
+        return view('chef.menu-management', compact('meals', 'categories', 'selectedCategory'));
     }
 
     public function createMeal(Request $request)

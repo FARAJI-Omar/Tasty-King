@@ -5,7 +5,6 @@
 @push('admin-content')
     <div class="admin-dashboard">
         <div class="dashboard-cards">
-            <!-- Total Orders Card 1 -->
             <div class="dashboard-card">
                 <div class="card-header">
                     <span class="card-title">Total Orders</span>
@@ -18,14 +17,13 @@
             <!-- Total Orders Card 2 -->
             <div class="dashboard-card">
                 <div class="card-header">
-                    <span class="card-title">Total Orders</span>
+                    <span class="card-title">Total Items</span>
                     <span class="card-icon cart-icon"><i class="fas fa-shopping-cart"></i></span>
                 </div>
-                <div class="card-value">521</div>
-                <div class="card-change positive">+ 12.5% from last week</div>
+                <div class="card-value">{{$totalMeals}}</div>
+                {{-- <div class="card-change positive">+ 12.5% from last week</div> --}}
             </div>
 
-            <!-- Revenue Card -->
             <div class="dashboard-card">
                 <div class="card-header">
                     <span class="card-title">Revenue</span>
@@ -35,14 +33,13 @@
                 <div class="card-change positive">+ 2.5% from last week</div>
             </div>
 
-            <!-- Active Users Card -->
             <div class="dashboard-card">
                 <div class="card-header">
-                    <span class="card-title">Active Users</span>
+                    <span class="card-title">Total Users</span>
                     <span class="card-icon users-icon"><i class="fas fa-users"></i></span>
                 </div>
-                <div class="card-value">305</div>
-                <div class="card-change positive">+ 5% from last week</div>
+                <div class="card-value">{{$totalUsers}}</div>
+                <div class="card-change positive">{{$active}}% active</div>
             </div>
         </div>
 

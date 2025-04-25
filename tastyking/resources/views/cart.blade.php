@@ -65,7 +65,7 @@
         <div class="summary-divider"></div>
         <div class="summary-row total">
             <div class="summary-label">Total :</div>
-            <div class="summary-value">{{ number_format($subtotal + 20, 2) }} dh</div>
+            <div class="summary-value">{{ $total }} dh</div>
         </div>
         <a href="{{ route('checkout') }}" class="checkout-btn" style="display: block; text-align: center; text-decoration: none;">Proceed to checkout</a>
     </div>

@@ -3,7 +3,9 @@
 @section('content')
 <h1 class="title">Checkout</h1>
 
-<form class="checkout-container">
+<form class="checkout-container" action="{{ route('place-order') }}" method="POST">
+    @csrf
+    <input type="hidden" name="order_id" value="{{ $order->id }}">
     <div class="checkout-section">
         <h2 class="section-title">Contact informations</h2>
         <div class="form-group">
@@ -16,7 +18,6 @@
         </div>
     </div>
 
-    <!-- Delivery Address Section -->
     <div class="checkout-section">
         <h2 class="section-title">Delivery Address</h2>
         <div class="form-group">
@@ -25,7 +26,6 @@
         </div>
     </div>
 
-    <!-- Message to Delivery Section -->
     <div class="checkout-section">
         <h2 class="section-title">Message to Delivery</h2>
         <div class="form-group">
@@ -34,7 +34,6 @@
         </div>
     </div>
 
-    <!-- Estimated Delivery Time Section -->
     <div class="checkout-section">
         <div class="delivery-info">
             <div class="delivery-label">Estimated Delivery Time :</div>
@@ -42,34 +41,32 @@
         </div>
     </div>
 
-    <!-- Order Total Section -->
     <div class="checkout-section">
         <div class="order-total">
             <div class="total-label">Order Total:</div>
-            <div class="total-value">145.25 dh</div>
+            <div class="total-value">{{ number_format($total, 2) }} dh</div>
         </div>
     </div>
 
-    <!-- Payment Method Section -->
     <div class="checkout-section">
         <h2 class="section-title">Payment Method</h2>
         <div class="payment-options">
             <div class="payment-option-container">
-                <input type="radio" id="paypal" name="payment_method" value="paypal" class="payment-radio" hidden>
+                <input type="radio" id="paypal" name="payment_method" value="paypal" class="payment-radio">
                 <label for="paypal" class="payment-option paypal">
                     <i class="fab fa-paypal"></i>
                     PayPal
                 </label>
             </div>
             <div class="payment-option-container">
-                <input type="radio" id="credit-card" name="payment_method" value="credit-card" class="payment-radio" hidden>
+                <input type="radio" id="credit-card" name="payment_method" value="credit-card" class="payment-radio">
                 <label for="credit-card" class="payment-option credit-card">
                     <i class="fa fa-credit-card"></i>
                     Credit Card
                 </label>
             </div>
             <div class="payment-option-container">
-                <input type="radio" id="cash" name="payment_method" value="cash" class="payment-radio" hidden checked>
+                <input type="radio" id="cash" name="payment_method" value="cash" class="payment-radio" checked>
                 <label for="cash" class="payment-option cash">
                     <i class="fa fa-money-bill"></i>
                     Cash on delivery
@@ -78,9 +75,8 @@
         </div>
     </div>
 
-    <!-- Place Order Button -->
-    <button class="place-order-btn">Place Order</button>
-</div>
+    <button type="submit" class="place-order-btn">Place Order</button>
+</form>
 
 @include('layouts.footer')
 @endsection
@@ -89,16 +85,26 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const paymentButtons = document.querySelectorAll('.payment-option');
+        const paymentLabels = document.querySelectorAll('.payment-option');
+        const paymentRadios = document.querySelectorAll('.payment-radio');
 
-        paymentButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                // Reset all buttons to default background
-                paymentButtons.forEach(btn => {
-                    btn.style.border = '';
+        // Set initial border for the checked radio button's label
+        const checkedRadio = document.querySelector('.payment-radio:checked');
+        if (checkedRadio) {
+            const label = document.querySelector(`label[for="${checkedRadio.id}"]`);
+            if (label) {
+                label.style.border = 'black 2px solid';
+            }
+        }
+
+        paymentLabels.forEach(label => {
+            label.addEventListener('click', function() {
+                // Reset all labels to default border
+                paymentLabels.forEach(lbl => {
+                    lbl.style.border = '';
                 });
-                // Set clicked button background
-                this.style.border = ' black 2px solid ';
+                // Set clicked label border
+                this.style.border = 'black 2px solid';
             });
         });
     });
@@ -190,8 +196,14 @@
         gap: 10px;
     }
 
-    .payment-option {
+    .payment-option-container {
         flex: 1;
+        position: relative;
+        display: flex;
+    }
+
+    .payment-option {
+        width: 100%;
         padding: 10px;
         border: 1px solid #FFE4B5;
         border-radius: 20px;
@@ -205,6 +217,17 @@
 
     .payment-option:hover {
         border: 1px solid black;
+    }
+
+    .payment-radio {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .payment-radio:checked + .payment-option {
+        border: 2px solid black;
     }
 
     .payment-option i {

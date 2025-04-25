@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('size'); // small, regular, large
             $table->integer('quantity');
             $table->timestamps();
-            
+
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('meal_id')->references('id')->on('meal')->onDelete('cascade');
         });

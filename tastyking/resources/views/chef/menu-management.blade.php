@@ -77,7 +77,7 @@
             <form method="POST" action="{{ route('update-meal', $meal->id) }}" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
-                @if ($errors->any())
+                @if ($errors->any() && session('meal_id') == $meal->id)
                 <div class="alert alert-danger">
                     <ul>
                         @foreach ($errors->all() as $error)
@@ -158,7 +158,7 @@
 
             <form id="addItemForm" method="POST" action="{{ route('create-meal') }}" enctype="multipart/form-data">
                 @csrf
-                @if ($errors->any())
+                @if ($errors->any() && !session('meal_id'))
                 <div class="alert alert-danger">
                     <ul>
                         @foreach ($errors->all() as $error)
@@ -736,7 +736,6 @@
             }, 3000);
         }
 
-        // Check if there's a category in the URL and filter accordingly
         const urlParams = new URLSearchParams(window.location.search);
         const categoryParam = urlParams.get('category');
         if (categoryParam) {
@@ -756,7 +755,6 @@
         const noResultsMessage = document.getElementById('noResultsMessage');
         let visibleCount = 0;
 
-        // Update URL with the selected category
         const url = new URL(window.location.href);
         if (categoryId === 'all') {
             url.searchParams.delete('category');
@@ -774,7 +772,6 @@
             }
         });
 
-        // Show/hide no results message
         if (visibleCount === 0 && menuItems.length > 0) {
             if (!noResultsMessage) {
                 const menuItemsContainer = document.querySelector('.menu-items');
@@ -794,26 +791,44 @@
 </script>
 
 <script>
-    // Function to show a modal
     function showModal(modalId) {
         const modal = document.getElementById(modalId);
         modal.classList.add('show');
-        document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        document.body.style.overflow = 'hidden';
     }
 
-    // Function to close a modal
     function closeModal(modalId) {
         const modal = document.getElementById(modalId);
         modal.classList.remove('show');
-        document.body.style.overflow = 'auto'; // Re-enable scrolling
+        document.body.style.overflow = 'auto';
     }
 
-    // Function to show delete confirmation
     function showDeleteConfirmation(mealId) {
         showModal('deleteConfirmation-' + mealId);
     }
 
+    // Check for validation errors and show the appropriate modal
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if there are any validation errors
+        const hasErrors = document.querySelectorAll('.alert-danger').length > 0;
 
+        if (hasErrors) {
+            // Check if the error is in the add item form
+            const addItemErrors = document.querySelector('#addItemModal .alert-danger');
+            if (addItemErrors) {
+                showModal('addItemModal');
+            }
+
+            // Check if the error is in an edit form
+            const editModals = document.querySelectorAll('[id^="editModal-"]');
+            editModals.forEach(modal => {
+                const errors = modal.querySelector('.alert-danger');
+                if (errors) {
+                    showModal(modal.id);
+                }
+            });
+        }
+    });
 </script>
 
 

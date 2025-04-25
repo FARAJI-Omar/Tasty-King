@@ -46,13 +46,17 @@ class MealController extends Controller
 
     public function createMeal(Request $request)
     {
-        $request->validate([
+        $validator = validator($request->all(), [
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'category_id' => 'required|exists:category,id',
         ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
 
         $imagePath = null;
         if ($request->hasFile('image')) {
@@ -72,13 +76,17 @@ class MealController extends Controller
 
     public function updateMeal(Request $request, $id)
     {
-        $request->validate([
+        $validator = validator($request->all(), [
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'category_id' => 'required|exists:category,id',
         ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->with('meal_id', $id)->withInput();
+        }
 
         $meal = Meal::findOrFail($id);
 

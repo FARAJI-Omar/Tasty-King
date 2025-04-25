@@ -12,7 +12,8 @@
     </div>
 </div>
 
-<form action="{{ route('cart') }}" method="GET" class="buttons">
+<form action="{{ route('add-to-cart') }}" method="POST" class="buttons">
+    @csrf
     <input type="hidden" name="meal_id" value="{{ $meal->id }}">
     <div class="size-quantity">
         <div class="size-selection">

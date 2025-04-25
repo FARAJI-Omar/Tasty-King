@@ -10,71 +10,66 @@
         <span>price</span>
     </div>
     <div class="cart-divider"></div>
-
+    @if($cartItems->count() > 0)
+        @foreach($cartItems as $item)
+        @php
+            $itemTotal = $item->meal_price * $item->quantity;
+        @endphp
         <div class="cart-item">
             <div class="item-image">
-                <img src="{{ asset('images/sandwish.png') }}" alt="Crispy Sandwich">
+                <img src="{{ asset('storage/' . $item->meal_image) }}" alt="{{ $item->meal_name }}">
             </div>
-            <div class="item-name">Crispy Sandwich</div>
+            <div class="item-name">{{ $item->meal_name }} <span style="font-size: 14px; color: #666;">({{ ucfirst($item->size) }})</span></div>
             <div class="item-quantity">
-                <button class="quantity-btn decrease">-</button>
-                <span class="quantity-value">2</span>
-                <button class="quantity-btn increase">+</button>
+                <form action="{{ route('update-cart', $item->id) }}" method="POST" class="quantity-form" style="display: flex; align-items: center;">
+                    @csrf
+                    @method('PATCH')
+                    <button type="button" class="quantity-btn decrease" onclick="decreaseQuantity(this)">-</button>
+                    <input type="number" name="quantity" value="{{ $item->quantity }}" min="1" class="quantity-value" style="width: 40px; text-align: center; border: none; background: none;" readonly>
+                    <button type="button" class="quantity-btn increase" onclick="increaseQuantity(this)">+</button>
+                </form>
             </div>
-            <div class="item-price">71.98 dh</div>
-            <button class="remove-btn">&times;</button>
+            <div class="item-price">{{ number_format($itemTotal, 2) }} dh</div>
+            <form action="{{ route('remove-from-cart', $item->id) }}" method="POST" style="display: inline;">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="remove-btn">&times;</button>
+            </form>
         </div>
-
-
-        <div class="cart-item">
-            <div class="item-image">
-                <img src="{{ asset('images/sandwish.png') }}" alt="Healthy Burger">
+        @endforeach
+    @else
+        <div class="empty-cart-message">
+            <div class="empty-cart-icon">
+                <i class="fas fa-shopping-cart"></i>
             </div>
-            <div class="item-name">Healthy Burger</div>
-            <div class="item-quantity">
-                <button class="quantity-btn decrease">-</button>
-                <span class="quantity-value">1</span>
-                <button class="quantity-btn increase">+</button>
-            </div>
-            <div class="item-price">40 dh</div>
-            <button class="remove-btn">&times;</button>
+            <h2>Your cart is empty</h2>
+            <p>Looks like you haven't added any items to your cart yet.</p>
+            <a href="{{ route('menu') }}" class="browse-menu-btn">Browse Menu</a>
         </div>
-
-
-        <div class="cart-item">
-            <div class="item-image">
-                <img src="{{ asset('images/sandwish.png') }}" alt="Hot Soup">
-            </div>
-            <div class="item-name">Hot Soup</div>
-            <div class="item-quantity">
-                <button class="quantity-btn decrease">-</button>
-                <span class="quantity-value">1</span>
-                <button class="quantity-btn increase">+</button>
-            </div>
-            <div class="item-price">25.99 dh</div>
-            <button class="remove-btn">&times;</button>
-        </div>
+    @endif
     </div>
 
     <div class="cart-divider"></div>
 
 
+    @if(isset($cartItems) && $cartItems->count() > 0)
     <div class="cart-summary">
         <div class="summary-row">
             <div class="summary-label">Subtotal :</div>
-            <div class="summary-value">137.97 dh</div>
+            <div class="summary-value">{{ number_format($subtotal, 2) }} dh</div>
         </div>
         <div class="summary-row">
             <div class="summary-label">Delivery fee :</div>
-            <div class="summary-value">20 dh</div>
+            <div class="summary-value">20.00 dh</div>
         </div>
         <div class="summary-divider"></div>
         <div class="summary-row total">
             <div class="summary-label">Total :</div>
-            <div class="summary-value">157,97 dh</div>
+            <div class="summary-value">{{ number_format($subtotal + 20, 2) }} dh</div>
         </div>
-        <button class="checkout-btn">Proceed to checkout</button>
+        <a href="{{ route('checkout') }}" class="checkout-btn" style="display: block; text-align: center; text-decoration: none;">Proceed to checkout</a>
     </div>
+    @endif
 </div>
 
 @include('layouts.footer')
@@ -252,4 +247,71 @@
     body {
         background-color: #FFB30E;
     }
+
+    .empty-cart-message {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background-color: white;
+        border-radius: 10px;
+        padding: 40px 20px;
+        margin: 20px 0;
+        text-align: center;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    .empty-cart-icon {
+        font-size: 60px;
+        color: #FFB30E;
+        margin-bottom: 20px;
+    }
+
+    .empty-cart-message h2 {
+        font-size: 24px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .empty-cart-message p {
+        font-size: 16px;
+        color: #666;
+        margin-bottom: 25px;
+    }
+
+    .browse-menu-btn {
+        background-color: #FFB30E;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 24px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background-color 0.3s;
+    }
+
+    .browse-menu-btn:hover {
+        background-color: #F17228;
+    }
 </style>
+
+<script>
+    function increaseQuantity(button) {
+        const form = button.closest('form');
+        const input = form.querySelector('input[name="quantity"]');
+        input.value = parseInt(input.value) + 1;
+        form.submit();
+    }
+
+    function decreaseQuantity(button) {
+        const form = button.closest('form');
+        const input = form.querySelector('input[name="quantity"]');
+        if (parseInt(input.value) > 1) {
+            input.value = parseInt(input.value) - 1;
+            form.submit();
+        }
+    }
+</script>

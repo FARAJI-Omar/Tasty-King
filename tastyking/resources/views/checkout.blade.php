@@ -3,8 +3,7 @@
 @section('content')
 <h1 class="title">Checkout</h1>
 
-<div class="checkout-container">
-    <!-- Contact Information Section -->
+<form class="checkout-container">
     <div class="checkout-section">
         <h2 class="section-title">Contact informations</h2>
         <div class="form-group">
@@ -55,18 +54,27 @@
     <div class="checkout-section">
         <h2 class="section-title">Payment Method</h2>
         <div class="payment-options">
-            <button class="payment-option paypal">
-                <i class="fab fa-paypal"></i>
-                PayPal
-            </button>
-            <button class="payment-option credit-card">
-                <i class="fa fa-credit-card"></i>
-                Credit Card
-            </button>
-            <button class="payment-option cash">
-                <i class="fa fa-money-bill"></i>
-                Cash on delivery
-            </button>
+            <div class="payment-option-container">
+                <input type="radio" id="paypal" name="payment_method" value="paypal" class="payment-radio" hidden>
+                <label for="paypal" class="payment-option paypal">
+                    <i class="fab fa-paypal"></i>
+                    PayPal
+                </label>
+            </div>
+            <div class="payment-option-container">
+                <input type="radio" id="credit-card" name="payment_method" value="credit-card" class="payment-radio" hidden>
+                <label for="credit-card" class="payment-option credit-card">
+                    <i class="fa fa-credit-card"></i>
+                    Credit Card
+                </label>
+            </div>
+            <div class="payment-option-container">
+                <input type="radio" id="cash" name="payment_method" value="cash" class="payment-radio" hidden checked>
+                <label for="cash" class="payment-option cash">
+                    <i class="fa fa-money-bill"></i>
+                    Cash on delivery
+                </label>
+            </div>
         </div>
     </div>
 

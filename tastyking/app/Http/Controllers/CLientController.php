@@ -95,8 +95,62 @@ class CLientController extends Controller
     }
 
     public function showItemDetails($id)
-    {  
+    {
         $meal = Meal::findOrFail($id);
         return view('itemDetails', compact('meal'));
+    }
+
+    public function addToCart(Request $request)
+    {
+        $request->validate([
+            'meal_id' => 'required|exists:meal,id',
+            'size' => 'required|in:small,regular,large',
+            'quantity' => 'required|integer|min:1'
+        ]);
+
+        // Get existing cart or create empty array
+        $cart = session()->get('cart', []);
+
+        // Get meal details
+        $meal = Meal::findOrFail($request->meal_id);
+
+        // Add new item to cart
+        $cart[] = [
+            'id' => $meal->id,
+            'name' => $meal->name,
+            'price' => $meal->price,
+            'image' => $meal->image,
+            'size' => $request->size,
+            'quantity' => $request->quantity
+        ];
+
+        // Save cart back to session
+        session()->put('cart', $cart);
+
+        return redirect()->route('cart')->with('success', $meal->name . ' added to cart!');
+    }
+
+    public function removeFromCart(Request $request)
+    {
+        $request->validate([
+            'index' => 'required|integer|min:0'
+        ]);
+
+        $index = $request->index;
+        $cart = session()->get('cart', []);
+
+        if (isset($cart[$index])) {
+            $itemName = $cart[$index]['name'];
+
+            // Remove the item from the cart
+            array_splice($cart, $index, 1);
+
+            // Update the cart in the session
+            session()->put('cart', $cart);
+
+            return redirect()->route('cart')->with('success', $itemName . ' removed from cart!');
+        }
+
+        return redirect()->route('cart')->with('error', 'Item not found in cart!');
     }
 }

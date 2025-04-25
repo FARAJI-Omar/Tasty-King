@@ -55,6 +55,20 @@
                     Login
                 </a>
             @endauth
+
+            @if(Auth::check() && Auth::user()->role == 'client')
+            <div class="carte-container">
+                <a href="{{ route('cart') }}" class="carte-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                    @php
+                        $cartCount = App\Models\Cart::where('user_id', Auth::id())->sum('quantity');
+                    @endphp
+                    @if($cartCount > 0)
+                        <span class="carte-count">{{ $cartCount }}</span>
+                    @endif
+                </a>
+            </div>
+            @endif
         </div>
 
     </nav>
@@ -133,6 +147,42 @@
     background-color: #ffe9a1;
   }
 
+</style>
+
+<style>
+  /* Cart Styles */
+  .carte-container {
+    display: flex;
+    margin-left: -5rem;
+  }
+
+  .carte-icon {
+    position: relative;
+    font-size: 20px;
+    color: #ffb30e;
+    transition: color 0.3s ease;
+  }
+
+  .carte-icon:hover {
+    color: #ff7a50;
+  }
+
+  .carte-count {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background-color: #ff7a50;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
 </style>
 
 <style>

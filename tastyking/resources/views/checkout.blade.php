@@ -3,18 +3,24 @@
 @section('content')
 <h1 class="title">Checkout</h1>
 
-<form class="checkout-container" action="{{ route('place-order') }}" method="POST">
+<form class="checkout-container" action="{{ route('place-order') }}" method="POST" id="checkoutForm">
     @csrf
     <input type="hidden" name="order_id" value="{{ $order->id }}">
     <div class="checkout-section">
         <h2 class="section-title">Contact informations</h2>
         <div class="form-group">
             <label for="fullName">Full Name</label>
-            <input type="text" id="fullName" name="fullName">
+            <input type="text" id="fullName" name="fullName" value="{{old('fullName')}}">
+            @error('fullName')
+                <span class="error-message">{{ $message }}</span>
+            @enderror
         </div>
         <div class="form-group">
             <label for="phoneNumber">Phone Number</label>
-            <input type="text" id="phoneNumber" name="phoneNumber">
+            <input type="text" id="phoneNumber" name="phoneNumber" value="{{old('phoneNumber')}}">
+            @error('phoneNumber')
+                <span class="error-message">{{ $message }}</span>
+            @enderror
         </div>
     </div>
 
@@ -22,7 +28,10 @@
         <h2 class="section-title">Delivery Address</h2>
         <div class="form-group">
             <label for="address">Address</label>
-            <input type="text" id="address" name="address">
+            <input type="text" id="address" name="address" value="{{old('address')}}">
+            @error('address')
+                <span class="error-message">{{ $message }}</span>
+            @enderror
         </div>
     </div>
 
@@ -30,7 +39,7 @@
         <h2 class="section-title">Message to Delivery</h2>
         <div class="form-group">
             <label for="message">Message</label>
-            <textarea id="message" name="message" rows="4"></textarea>
+            <textarea id="message" name="message" rows="4">{{old('message')}}</textarea>
         </div>
     </div>
 
@@ -59,29 +68,23 @@
                 </label>
             </div>
             <div class="payment-option-container">
-                <input type="radio" id="credit-card" name="payment_method" value="credit-card" class="payment-radio">
-                <label for="credit-card" class="payment-option credit-card">
-                    <i class="fa fa-credit-card"></i>
-                    Credit Card
-                </label>
-            </div>
-            <div class="payment-option-container">
-                <input type="radio" id="cash" name="payment_method" value="cash" class="payment-radio" checked>
+                <input type="radio" id="cash" name="payment_method" value="cod" class="payment-radio" checked>
                 <label for="cash" class="payment-option cash">
                     <i class="fa fa-money-bill"></i>
                     Cash on delivery
                 </label>
             </div>
         </div>
+        @error('payment_method')
+            <span class="error-message payment-error">{{ $message }}</span>
+        @enderror
     </div>
 
-    <button type="submit" class="place-order-btn">Place Order</button>
+    <button type="submit" class="place-order-btn" id="placeOrderBtn">Place Order</button>
 </form>
 
 @include('layouts.footer')
 @endsection
-
-
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -109,10 +112,6 @@
         });
     });
 </script>
-
-
-
-
 
 <style>
     .title {
@@ -240,13 +239,8 @@
         color: #003087;
     }
 
-    .payment-option.credit-card {
-        background-color: #0070BA;
-        color: white;
-    }
-
     .payment-option.cash {
-        background-color: #FF7043;
+        background-color: #0070BA;
         color: white;
     }
 
@@ -266,5 +260,22 @@
 
     .place-order-btn:hover {
         background-color: #e05a0c;
+    }
+
+    .error-message {
+        color: #dc3545;
+        font-size: 0.85rem;
+        margin-top: 5px;
+        display: block;
+    }
+    
+    .form-group input:has(+ .error-message),
+    .form-group textarea:has(+ .error-message) {
+        border-color: #dc3545;
+    }
+    
+    .payment-error {
+        margin-top: 10px;
+        text-align: center;
     }
 </style>

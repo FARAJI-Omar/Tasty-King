@@ -11,10 +11,7 @@ class CheckoutController extends Controller
 {
     public function index(Request $request)
     {
-        if (!Auth::check()) {
-            return redirect()->route('login')->with('error', 'Please login to proceed to checkout');
-        }
-
+       
         $cartItems = Cart::where('user_id', Auth::id())->get();
 
         if ($cartItems->isEmpty()) {
@@ -50,4 +47,27 @@ class CheckoutController extends Controller
         return view('checkout', compact('total', 'order'));
     }
 
+    public function placeOrder(Request $request)
+    {
+        $request->validate([
+            'fullName' => 'required|string|max:255',
+            'phoneNumber' => 'required|string|max:20',
+            'address' => 'required|string|max:255',
+            'payment_method' => 'required|in:paypal,credit-card,cod',
+            'order_id' => 'required|exists:orders,id'
+        ]);
+
+        $order = Order::where('id', $request->order_id)
+            ->where('user_id', Auth::id())
+            ->first();
+
+        $order->delivery_address = $request->address;
+        $order->delivery_message = $request->message;
+        $order->payment_method = $request->payment_method;
+        $order->save();
+
+        Cart::where('user_id', Auth::id())->delete();   
+
+        return redirect()->route('order.success');
+    }
 }

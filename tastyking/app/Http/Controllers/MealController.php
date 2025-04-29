@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Meal;
 use App\Models\Category;
+use App\Models\Review;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -119,7 +120,8 @@ class MealController extends Controller
 
     public function showItemDetails($id)
     {
+        $reviews = Review::all();
         $meal = Meal::findOrFail($id);
-        return view('itemDetails', compact('meal'));
+        return view('itemDetails', compact('meal', 'reviews'));
     }
 }

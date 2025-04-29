@@ -15,6 +15,7 @@ class Meal extends Model
         'price',
         'image',
         'category_id',
+        'order_count',
     ];
 
     /**

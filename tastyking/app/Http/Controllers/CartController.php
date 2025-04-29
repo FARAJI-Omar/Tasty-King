@@ -9,18 +9,21 @@ use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
-    public function index()
+    public function viewCart()
     {
         $cartItems = [];
         $subtotal = 0;
+        $total = 0; // Initialize total to avoid undefined variable
 
         if (Auth::check()) {
             $cartItems = Cart::where('user_id', Auth::id())->get();
 
             foreach ($cartItems as $item) {
                 $subtotal += $item->meal_price * $item->quantity;
-                $total = $subtotal + 20;
             }
+
+            // Calculate total outside the loop
+            $total = $subtotal + 20;
         }
 
         return view('cart', compact('cartItems', 'subtotal', 'total'));
@@ -56,7 +59,7 @@ class CartController extends Controller
             ]);
         }
 
-        return redirect()->route('cart')->with('success', $meal->name . ' added to cart!');
+        return redirect()->back()->with('success', 'Great choice! ' . $meal->name . ' has been added to your cart successfully.');
     }
 
     public function removeFromCart($id)
@@ -91,8 +94,6 @@ class CartController extends Controller
 
         return redirect()->route('cart')->with('success', 'Cart updated successfully!');
     }
-
-
 
     public function getCartCount()
     {

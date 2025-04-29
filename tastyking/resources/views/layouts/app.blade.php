@@ -26,6 +26,13 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    <style>
+        body {
+            padding-top: 60px;
+            margin: 0;
+        }
+    </style>
+
 </head>
 <body>
     <!-- Navigation -->

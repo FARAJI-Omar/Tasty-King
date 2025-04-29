@@ -5,15 +5,15 @@
             <div class="logo">
             @if(!Auth::user() ||Auth::user()->role == 'client')
             <a href="{{ route('welcome') }}">
-                <img class="icon" src="{{ asset('images/logo tastyking.png')}}"></img>
+                <img class="icon logo-img" src="{{ asset('images/logo_tastyking.png')}}" alt="Tasty King Logo">
             </a>
             @elseif(Auth::user()->role == 'chef')
               <a href="{{ route('chef.menu-management') }}">
-                <img class="icon" src="{{ asset('images/logo tastyking.png')}}"></img>
+                <img class="icon logo-img" src="{{ asset('images/logo_tastyking.png')}}" alt="Tasty King Logo">
               </a>
             @elseif(Auth::user()->role == 'admin')
               <a href="{{ route('dashboard') }}">
-                <img class="icon" src="{{ asset('images/logo tastyking.png')}}"></img>
+                <img class="icon logo-img" src="{{ asset('images/logo_tastyking.png')}}" alt="Tasty King Logo">
               </a>
             @endif
             </div>
@@ -83,22 +83,32 @@
     display: flex;
     align-items: center;
     justify-content: center;
-
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   }
+
   .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 15px 30px;
     width: 80%;
-    margin-right: 50px;
+    margin-right: 60px;
+    margin-left: 180px;
   }
 
 
-  .logo img {
-      width: 85%;
+  .logo img, .logo-img {
+      width: 120px;
+      height: auto;
+      max-height: 40px;
+      object-fit: contain;
   }
-
 
 
   .search-bar {
@@ -109,7 +119,7 @@
     border-radius: 8px;
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.06);
     width: 200px;
-    margin-left: 380px;
+    margin-left: 30px;
   }
 
   .search-bar input {
@@ -147,13 +157,10 @@
     background-color: #ffe9a1;
   }
 
-</style>
-
-<style>
-  /* Cart Styles */
   .carte-container {
     display: flex;
-    margin-left: -5rem;
+    margin-left: -10rem;
+    margin-right: 10rem;
   }
 
   .carte-icon {
@@ -225,7 +232,7 @@
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       width: 125px;
       display: none;
-      z-index: 1000;
+      z-index: 1001; /* Higher than the navbar z-index */
   }
 
   .dropdown-item {
@@ -255,6 +262,7 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Profile dropdown functionality
         const profileButton = document.getElementById('profile-button');
         const profileDropdown = document.getElementById('profile-dropdown');
         const profileContainer = document.querySelector('.profile-container');

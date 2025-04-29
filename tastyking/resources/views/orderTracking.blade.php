@@ -4,203 +4,88 @@
 <div class="order-tracking-container">
     <h1 class="page-title">Track Your Orders</h1>
 
-    <div class="orders-container">
+    @if(session('success'))
+        <div class="success-message" id="successMessage">{{ session('success') }}</div>
+    @endif
 
+    <div class="orders-container">
         <div class="orders-section">
             <h2 class="section-title"></h2>
 
-
-            <div class="order-card">
-                <div class="order-header" onclick="toggleOrderDetails(this)">
-                    <div class="order-info">
-                        <span class="order-number">Order #12347</span>
-                        <span class="order-date">June 10, 2023 - 2:15 PM</span>
-                    </div>
-                    <div class="header-right">
-                        <span class="status-badge delivered">Delivered</span>
-                        <i class="fas fa-chevron-down toggle-icon"></i>
-                    </div>
+            @if($orders->isEmpty())
+                <div class="no-orders-message">
+                    <p>You don't have any orders yet.</p>
+                    <p>Browse our menu and place your first order!</p>
                 </div>
-
-                <div class="order-details hidden">
-                    <div class="order-items">
-                        <div class="order-item">
-                            <span class="item-quantity">2x</span>
-                            <span class="item-name">Pepperoni Pizza</span>
-                            <span class="item-price">140.00 dh</span>
-                        </div>
-                        <div class="order-item">
-                            <span class="item-quantity">1x</span>
-                            <span class="item-name">Ice Cream</span>
-                            <span class="item-price">25.00 dh</span>
-                        </div>
-                    </div>
-                    <div class="order-date-time">
-                        <span class="order-time">Ordered: June 10, 2023 - 2:15 PM</span>
-                    </div>
-
-                    <div class="order-progress">
-                        <div class="progress-track">
-                            <div class="progress-step completed">
-                                <div class="step-icon">
-                                    <i class="fas fa-utensils"></i>
-                                </div>
-                                <span class="step-label">Preparing</span>
+            @else
+                @foreach($orders as $order)
+                    <div class="order-card">
+                        <div class="order-header" onclick="toggleOrderDetails(this)">
+                            <div class="order-info">
+                                <span class="order-number">Order #{{ $order->id }}</span>
+                                <span class="order-date">{{ $order->created_at->format('F d, Y - g:i A') }}</span>
                             </div>
-                            <div class="progress-step completed">
-                                <div class="step-icon">
-                                    <i class="fas fa-motorcycle"></i>
-                                </div>
-                                <span class="step-label">On the way</span>
-                            </div>
-                            <div class="progress-step active">
-                                <div class="step-icon">
-                                    <i class="fas fa-check-circle"></i>
-                                </div>
-                                <span class="step-label">Delivered</span>
+                            <div class="header-right">
+                                <span class="status-badge {{ $order->status }}">{{ ucfirst($order->status) }}</span>
+                                <i class="fas fa-chevron-down toggle-icon"></i>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="order-actions">
-                        <button class="received-btn" onclick="this.disabled=true; this.textContent='Order Received'; this.classList.add('disabled'); this.closest('.order-card').querySelector('.status-badge').textContent='Received'; this.closest('.order-card').querySelector('.status-badge').className='status-badge received';">Mark as Received</button>
-                        <button class="report-btn">Report Issue</button>
-                    </div>
-
-                    <div class="order-total">
-                        <span class="total-label">Total:</span>
-                        <span class="total-value">165.00 dh</span>
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="order-card">
-                <div class="order-header" onclick="toggleOrderDetails(this)">
-                    <div class="order-info">
-                        <span class="order-number">Order #12346</span>
-                        <span class="order-date">June 10, 2023 - 1:45 PM</span>
-                    </div>
-                    <div class="header-right">
-                        <span class="status-badge on-the-way">On the way</span>
-                        <i class="fas fa-chevron-down toggle-icon"></i>
-                    </div>
-                </div>
-
-                <div class="order-details hidden">
-                    <div class="order-items">
-                        <div class="order-item">
-                            <span class="item-quantity">1x</span>
-                            <span class="item-name">Veggie Burger</span>
-                            <span class="item-price">40.00 dh</span>
-                        </div>
-                        <div class="order-item">
-                            <span class="item-quantity">1x</span>
-                            <span class="item-name">Chocolate Cake</span>
-                            <span class="item-price">35.00 dh</span>
-                        </div>
-                    </div>
-                    <div class="order-date-time">
-                        <span class="order-time">Ordered: June 10, 2023 - 1:45 PM</span>
-                    </div>
-
-                    <div class="order-progress">
-                        <div class="progress-track">
-                            <div class="progress-step completed">
-                                <div class="step-icon">
-                                    <i class="fas fa-utensils"></i>
-                                </div>
-                                <span class="step-label">Preparing</span>
+                        <div class="order-details hidden">
+                            <div class="order-items">
+                                @foreach(json_decode($order->items_data) as $item)
+                                    <div class="order-item">
+                                        <span class="item-quantity">{{ $item->quantity }}x</span>
+                                        <span class="item-name">{{ $item->meal_name }} ({{ $item->size }})</span>
+                                        <span class="item-price">{{ number_format($item->meal_price * $item->quantity, 2) }} dh</span>
+                                    </div>
+                                @endforeach
                             </div>
-                            <div class="progress-step active">
-                                <div class="step-icon">
-                                    <i class="fas fa-motorcycle"></i>
-                                </div>
-                                <span class="step-label">On the way</span>
+                            <div class="order-date-time">
+                                <span class="order-time">Ordered: {{ $order->created_at->format('F d, Y - g:i A') }}</span>
                             </div>
-                            <div class="progress-step">
-                                <div class="step-icon">
-                                    <i class="fas fa-check-circle"></i>
+
+                            <div class="order-progress">
+                                <div class="progress-track">
+                                    <div class="progress-step {{ $order->status == 'waiting' ? 'active' : ($order->status == 'delivered' || $order->status == 'received' ? 'completed' : '') }}">
+                                        <div class="step-icon">
+                                            <i class="fas fa-utensils"></i>
+                                        </div>
+                                        <span class="step-label">Preparing</span>
+                                    </div>
+                                    <div class="progress-step {{ $order->status == 'on-the-way' ? 'active' : ($order->status == 'delivered' || $order->status == 'received' ? 'completed' : '') }}">
+                                        <div class="step-icon">
+                                            <i class="fas fa-motorcycle"></i>
+                                        </div>
+                                        <span class="step-label">On the way</span>
+                                    </div>
+                                    <div class="progress-step {{ $order->status == 'delivered' ? 'active' : ($order->status == 'received' ? 'completed' : '') }}">
+                                        <div class="step-icon">
+                                            <i class="fas fa-check-circle"></i>
+                                        </div>
+                                        <span class="step-label">Delivered</span>
+                                    </div>
                                 </div>
-                                <span class="step-label">Delivered</span>
+                            </div>
+
+                            <div class="order-actions">
+                                @if($order->status == 'delivered')
+                                    <form action="{{ route('order.update-status', $order->id) }}" method="POST" style="display: inline;">
+                                        @csrf
+                                        <button type="submit" class="received-btn">Mark as Received</button>
+                                    </form>
+                                @endif
+                                <button class="report-btn">Report Issue</button>
+                            </div>
+
+                            <div class="order-total">
+                                <span class="total-label">Total:</span>
+                                <span class="total-value">{{ number_format($order->total, 2) }} dh</span>
                             </div>
                         </div>
                     </div>
-
-                    <div class="order-actions">
-                        <button class="report-btn">Report Issue</button>
-                    </div>
-
-                    <div class="order-total">
-                        <span class="total-label">Total:</span>
-                        <span class="total-value">75.00 dh</span>
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="order-card">
-                <div class="order-header" onclick="toggleOrderDetails(this)">
-                    <div class="order-info">
-                        <span class="order-number">Order #12345</span>
-                        <span class="order-date">June 10, 2023 - 12:30 PM</span>
-                    </div>
-                    <div class="header-right">
-                        <span class="status-badge preparing">Preparing</span>
-                        <i class="fas fa-chevron-down toggle-icon"></i>
-                    </div>
-                </div>
-
-                <div class="order-details hidden">
-                    <div class="order-items">
-                        <div class="order-item">
-                            <span class="item-quantity">2x</span>
-                            <span class="item-name">Classic Burger</span>
-                            <span class="item-price">90.00 dh</span>
-                        </div>
-                        <div class="order-item">
-                            <span class="item-quantity">1x</span>
-                            <span class="item-name">Cheese Pizza</span>
-                            <span class="item-price">70.00 dh</span>
-                        </div>
-                    </div>
-                    <div class="order-date-time">
-                        <span class="order-time">Ordered: June 10, 2023 - 12:30 PM</span>
-                    </div>
-
-                    <div class="order-progress">
-                        <div class="progress-track">
-                            <div class="progress-step active">
-                                <div class="step-icon">
-                                    <i class="fas fa-utensils"></i>
-                                </div>
-                                <span class="step-label">Preparing</span>
-                            </div>
-                            <div class="progress-step">
-                                <div class="step-icon">
-                                    <i class="fas fa-motorcycle"></i>
-                                </div>
-                                <span class="step-label">On the way</span>
-                            </div>
-                            <div class="progress-step">
-                                <div class="step-icon">
-                                    <i class="fas fa-check-circle"></i>
-                                </div>
-                                <span class="step-label">Delivered</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="order-actions">
-                        <button class="report-btn">Report Issue</button>
-                    </div>
-
-                    <div class="order-total">
-                        <span class="total-label">Total:</span>
-                        <span class="total-value">160.00 dh</span>
-                    </div>
-                </div>
-            </div>
+                @endforeach
+            @endif
         </div>
     </div>
 </div>
@@ -237,6 +122,12 @@
 @include('layouts.footer')
 @endsection
 
+
+<script>
+    setTimeout(function() {
+                document.getElementById('successMessage').style.display = 'none';
+    }, 3000);
+</script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.report-btn').forEach(button => {
@@ -268,6 +159,7 @@
     function closeReportModal() {
         document.getElementById('reportModal').classList.remove('show');
     }
+
 </script>
 
 <style>
@@ -684,6 +576,22 @@
         color: #666;
         padding: 2rem;
         font-style: italic;
+    }
+
+    .success-message {
+        background-color: #E8F5E9;
+        color: #2E7D32;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        margin-top: 0.5rem;
+        text-align: center;
+        font-weight: 500;
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
     @media (max-width: 600px) {

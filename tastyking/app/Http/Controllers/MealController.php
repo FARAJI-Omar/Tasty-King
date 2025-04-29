@@ -15,7 +15,6 @@ class MealController extends Controller
 
         $mealsQuery = Meal::query();
 
-        // Filter by category if a valid category ID is provided
         if ($categoryId && $categoryId != 'all') {
             $mealsQuery->where('category_id', $categoryId);
         }
@@ -32,7 +31,6 @@ class MealController extends Controller
 
         $mealsQuery = Meal::query();
 
-        // Filter by category if a valid category ID is provided
         if ($categoryId && $categoryId != 'all') {
             $mealsQuery->where('category_id', $categoryId);
         }
@@ -110,14 +108,18 @@ class MealController extends Controller
     {
         $meal = Meal::findOrFail($id);
 
-        // Delete the image file if it exists
         if ($meal->image && Storage::disk('public')->exists($meal->image)) {
             Storage::disk('public')->delete($meal->image);
         }
 
-        // Delete the meal from the database
         $meal->delete();
 
         return redirect()->back()->with('success', 'Meal deleted successfully!');
+    }
+
+    public function showItemDetails($id)
+    {
+        $meal = Meal::findOrFail($id);
+        return view('itemDetails', compact('meal'));
     }
 }

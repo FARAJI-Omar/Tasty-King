@@ -8,7 +8,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
-use App\Http\Controllers\PaypalController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Middleware\RoleClient;
 use App\Http\Middleware\RoleChef;
 use App\Http\Middleware\RoleAdmin;
@@ -48,6 +48,9 @@ Route::middleware('auth')->group(function () {
 
         Route::get('order-tracking', [OrderController::class, 'orderTracking'])->name('order-tracking');
         Route::post('order/{id}/update-status', [OrderController::class, 'updateOrderStatus'])->name('order.update-status');
+
+        // Review routes
+        Route::post('meal/add-review', [ReviewController::class, 'addReview'])->name('meal.add-review');
     });
 
     // chef routes

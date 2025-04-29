@@ -1,4 +1,7 @@
 @extends('layouts.app')
+@php
+    use Illuminate\Support\Facades\Auth;
+@endphp
 
 @section('content')
 
@@ -54,6 +57,129 @@
         </button>
     </div>
 </form>
+<br><br><br>
+<div class="reviews-section">
+    <div class="reviews-header">
+        <h2 class="reviews-title">Customer Reviews</h2>
+        @php
+            $userReview = null;
+            if(Auth::check()) {
+                $userReview = $reviews->where('user_id', Auth::id())->first();
+            }
+        @endphp
+        @if(Auth::check() && !$userReview)
+            <button class="write-review-btn" onclick="showReviewModal()">
+                Write a Review
+            </button>
+        @endif
+    </div>
+
+    <div class="average-rating">
+        @php
+            $averageRating = $reviews->avg('stars') ?? 0;
+        @endphp
+        <div class="rating-stars">
+            @if ($averageRating == 5)
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+            @elseif ($averageRating >= 4)
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="far fa-star"></i>
+            @elseif ($averageRating >= 3)
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="far fa-star"></i>
+                <i class="far fa-star"></i>
+            @elseif ($averageRating >= 2)
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="far fa-star"></i>
+                <i class="far fa-star"></i>
+                <i class="far fa-star"></i>
+            @elseif ($averageRating > 0)
+                <i class="fas fa-star"></i>
+                <i class="far fa-star"></i>
+                <i class="far fa-star"></i>
+                <i class="far fa-star"></i>
+                <i class="far fa-star"></i>
+            @else
+                <i class="far fa-star"></i>
+                <i class="far fa-star"></i>
+                <i class="far fa-star"></i>
+                <i class="far fa-star"></i>
+                <i class="far fa-star"></i>
+            @endif
+        </div>
+        <div class="rating-number">
+            <span>{{ number_format($averageRating, 1) }}</span>
+        </div>
+    </div>
+
+    @if($reviews->isEmpty())
+        <div class="no-reviews">
+            <p>No reviews yet.</p>
+        </div>
+    @else
+        <div class="reviews-list">
+            @foreach($reviews as $review)
+                <div class="review-item">
+                    <div class="reviewer-name">{{ $review->user->name }}</div>
+                    <div class="review-rating">
+                        <span>{{ $review->stars }}/5</span>
+                    </div>
+                    <div class="review-text">{{ $review->description }}</div>
+                </div>
+            @endforeach
+        </div>
+    @endif
+</div>
+
+
+
+
+<!-- Review Modal -->
+<div class="review-modal" id="reviewModal">
+    <div class="modal-overlay" onclick="closeReviewModal()"></div>
+    <div class="review-form-container">
+        <div class="review-form">
+            <div class="form-header">
+                <h2>Write a Review</h2>
+                <button class="close-btn" onclick="closeReviewModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <form action="{{ route('meal.add-review') }}" method="POST">
+                @csrf
+                <input type="hidden" name="meal_id" value="{{ $meal->id }}">
+
+                <div class="form-group">
+                    <label for="review-stars">Rating</label>
+                    <select id="review-stars" name="stars" class="rating-select">
+                        <option value="1">★☆☆☆☆</option>
+                        <option value="2">★★☆☆☆</option>
+                        <option value="3">★★★☆☆</option>
+                        <option value="4">★★★★☆</option>
+                        <option value="5" selected>★★★★★</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="review-description">Your Review</label>
+                    <textarea id="review-description" name="description" rows="5" placeholder="Share your experience with this item..."></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="submit-review-btn">Submit Review</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 @include('layouts.footer')
 @endsection
@@ -330,6 +456,223 @@
         from { opacity: 1; }
         to { opacity: 0; }
     }
+
+    /* Reviews Section Styles */
+    .reviews-section {
+        width: 60%;
+        margin: 2rem auto 4rem;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .reviews-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #FFB30E;
+    }
+
+    .average-rating {
+        display: flex;
+        align-items: center;
+        margin-bottom: 2rem;
+        background-color: #FFF8DC;
+        padding: 1rem;
+        border-radius: 10px;
+    }
+
+    .rating-stars {
+        font-size: 1.1rem;
+        color: #FFB30E;
+        margin-right: 1rem;
+    }
+
+    .rating-number span {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #333;
+    }
+
+    .no-reviews {
+        text-align: center;
+        padding: 1rem;
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        color: #666;
+        font-style: italic;
+    }
+
+    .reviews-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .review-item {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .reviewer-name {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+
+    .review-rating {
+        color: #FFB30E;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .review-text {
+        color: #555;
+        line-height: 1.5;
+    }
+
+    /* Review Modal Styles */
+    .reviews-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .write-review-btn {
+        background-color: #F17228;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        transition: background-color 0.3s ease;
+    }
+
+    .write-review-btn:hover {
+        background-color: #e05a0c;
+    }
+
+    .review-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+    }
+
+    .review-form-container {
+        position: relative;
+        z-index: 1001;
+        width: 90%;
+        max-width: 500px;
+    }
+
+    .review-form {
+        background-color: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .form-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-header h2 {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #333;
+        margin: 0;
+    }
+
+    .close-btn {
+        background: none;
+        border: none;
+        font-size: 1.25rem;
+        color: #999;
+        cursor: pointer;
+        transition: color 0.2s;
+    }
+
+    .close-btn:hover {
+        color: #333;
+    }
+
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #555;
+    }
+
+    .form-group select, .form-group textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.9rem;
+    }
+
+    .rating-select {
+        color: #FFB30E;
+        font-size: 1.2rem;
+        cursor: pointer;
+        background-color: #FFF8DC;
+    }
+
+    .form-group textarea {
+        resize: vertical;
+    }
+
+    .form-actions {
+        text-align: right;
+    }
+
+    .submit-review-btn {
+        background-color: #F17228;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .submit-review-btn:hover {
+        background-color: #e05a0c;
+    }
 </style>
 
 <script>
@@ -345,4 +688,16 @@
             }, 3000);
         }
     });
+
+    // Show review modal
+    function showReviewModal() {
+        document.getElementById('reviewModal').style.display = 'flex';
+        document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
+    }
+
+    // Close review modal
+    function closeReviewModal() {
+        document.getElementById('reviewModal').style.display = 'none';
+        document.body.style.overflow = ''; // Restore scrolling
+    }
 </script>

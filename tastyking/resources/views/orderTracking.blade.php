@@ -76,9 +76,7 @@
                                     </form>
                                 @endif
 
-                                @if($order->status == 'received' || $order->status == 'delivered')
-                                    <button class="report-btn" onclick="showReportModal(this)">Add Review</button>
-                                @endif
+
                             </div>
 
                             <div class="order-total">
@@ -93,47 +91,7 @@
     </div>
 </div>
 
-<div class="report-modal" id="reportModal">
-    <div class="modal-overlay" onclick="closeReportModal()"></div>
-    <div class="report-form-container">
-        <div class="report-form">
-            <div class="form-header">
-                <h2>Add a review</h2>
-                <button class="close-btn" onclick="closeReportModal()"><i class="fas fa-times"></i></button>
-            </div>
-            <form action="{{route('order.add-review')}}" method="POST">
-                @csrf
-                <div class="form-group">
-                    <label for="order-id">Order ID</label>
-                    <input type="text" id="order-id" name="order_id" readonly>
-                </div>
-                <input type="hidden" id="meal-id" name="meal_id">
-                <div class="form-group">
-                    <label for="order-status">Order Status</label>
-                    <input type="text" id="order-status" name="order_status" readonly>
-                </div>
-                <div class="form-group">
-                    <label for="order-stars">Rating</label>
-                    <select id="order-stars" name="stars" class="rating-select">
-                        <option value="0">☆☆☆☆☆</option>
-                        <option value="1">★☆☆☆☆</option>
-                        <option value="2">★★☆☆☆</option>
-                        <option value="3">★★★☆☆</option>
-                        <option value="4">★★★★☆</option>
-                        <option value="5">★★★★★</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="report-description">Description</label>
-                    <textarea id="report-description" name="description" rows="5" placeholder="Describe your experience..."></textarea>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="submit-report-btn">Submit Review</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+
 
 @include('layouts.footer')
 @endsection
@@ -148,42 +106,7 @@
         }
     }, 3000);
 
-    // Simple function to show report modal
-    function showReportModal(button) {
-        // Get the order info
-        var orderCard = button.closest('.order-card');
-        var orderId = orderCard.querySelector('.order-number').textContent.replace('Order #', '');
-        var orderStatus = orderCard.querySelector('.status-badge').textContent;
 
-        // For simplicity, we'll use the first meal in the order for the review
-        // In a real app, you might want to let the user select which meal to review
-        var firstMealElement = orderCard.querySelector('.item-name');
-        var mealId = 1; // Default to 1 if we can't find a meal
-
-        // If there's a meal in the order, we'll extract its ID
-        // This assumes the meal ID is available in the DOM
-        // You might need to adjust this based on your actual data structure
-        if (firstMealElement) {
-            // Here you would extract the meal ID from your data
-            // For now, we'll use a placeholder
-            // In a real implementation, you might want to add data attributes to your HTML
-            // e.g., <div class="item-name" data-meal-id="123">...</div>
-            mealId = 1; // Replace with actual meal ID extraction
-        }
-
-        // Set values in the form
-        document.getElementById('order-id').value = orderId;
-        document.getElementById('order-status').value = orderStatus;
-        document.getElementById('meal-id').value = mealId;
-
-        // Show the modal
-        document.getElementById('reportModal').style.display = 'flex';
-    }
-
-    // Simple function to close report modal
-    function closeReportModal() {
-        document.getElementById('reportModal').style.display = 'none';
-    }
 
     // Simple function to toggle order details
     function toggleOrderDetails(header) {

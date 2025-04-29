@@ -17,26 +17,30 @@ class ReviewController extends Controller
             'stars' => 'required|integer|min:1|max:5',
         ]);
 
+        $userId = Auth::id();
+        $mealId = $request->meal_id;
+
+        $meal = Meal::findOrFail($mealId);
+        $allReviews = $meal->reviews;
+
+        // Create new review
         $review = new Review();
-        $review->meal_id = $request->meal_id;
-        $review->user_id = Auth::id();
+        $review->meal_id = $mealId;
+        $review->user_id = $userId;
         $review->description = $request->description;
         $review->stars = $request->stars;
-        
-        $meal = Meal::findOrFail($request->meal_id);
-        $existingReviews = $meal->reviews;
-        
-        if ($existingReviews->count() > 0) {
-            $totalStars = $existingReviews->sum('stars') + $request->stars;
-            $average = $totalStars / ($existingReviews->count() + 1);
+
+        // Calculate average
+        if ($allReviews->count() > 0) {
+            $totalStars = $allReviews->sum('stars') + $request->stars;
+            $average = $totalStars / ($allReviews->count() + 1);
         } else {
             $average = $request->stars;
         }
-        
+
         $review->average = $average;
         $review->save();
 
         return redirect()->back()->with('success', 'Thank you for your review!');
     }
-
 }

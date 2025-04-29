@@ -120,8 +120,8 @@ class MealController extends Controller
 
     public function showItemDetails($id)
     {
-        $reviews = Review::all();
         $meal = Meal::findOrFail($id);
+        $reviews = Review::where('meal_id', $id)->get();
         return view('itemDetails', compact('meal', 'reviews'));
     }
 }

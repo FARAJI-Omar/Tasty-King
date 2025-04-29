@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Models\Meal;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,7 +12,7 @@ class CheckoutController extends Controller
 {
     public function index(Request $request)
     {
-       
+
         $cartItems = Cart::where('user_id', Auth::id())->get();
 
         if ($cartItems->isEmpty()) {
@@ -66,7 +67,16 @@ class CheckoutController extends Controller
         $order->payment_method = $request->payment_method;
         $order->save();
 
-        Cart::where('user_id', Auth::id())->delete();   
+        $cartItems = Cart::where('user_id', Auth::id())->get();
+        foreach ($cartItems as $item) {
+            $meal = Meal::find($item->meal_id);
+            if ($meal) {
+                $meal->order_count += 1;
+                $meal->save();
+            }
+        }
+
+        Cart::where('user_id', Auth::id())->delete();
 
         return redirect()->route('order.success');
     }

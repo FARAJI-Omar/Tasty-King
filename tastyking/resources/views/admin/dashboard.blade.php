@@ -8,20 +8,17 @@
             <div class="dashboard-card">
                 <div class="card-header">
                     <span class="card-title">Total Orders</span>
-                    <span class="card-icon cart-icon"><i class="fas fa-shopping-cart"></i></span>
+                    <span class="card-icon cart-icon"><i class="fas fa-chart-line"></i></span>
                 </div>
-                <div class="card-value">521</div>
-                <div class="card-change positive">+ 12.5% from last week</div>
+                <div class="card-value">{{$totalOrders}}</div>
             </div>
 
-            <!-- Total Orders Card 2 -->
             <div class="dashboard-card">
                 <div class="card-header">
                     <span class="card-title">Total Items</span>
                     <span class="card-icon cart-icon"><i class="fas fa-shopping-cart"></i></span>
                 </div>
                 <div class="card-value">{{$totalMeals}}</div>
-                {{-- <div class="card-change positive">+ 12.5% from last week</div> --}}
             </div>
 
             <div class="dashboard-card">
@@ -29,8 +26,7 @@
                     <span class="card-title">Revenue</span>
                     <span class="card-icon revenue-icon"><i class="fas fa-dollar-sign"></i></span>
                 </div>
-                <div class="card-value">80,250 dh</div>
-                <div class="card-change positive">+ 2.5% from last week</div>
+                <div class="card-value">{{ number_format($totalRevenue, 2) }} dh</div>
             </div>
 
             <div class="dashboard-card">
@@ -50,71 +46,28 @@
         </div>
 
         <div class="dashboard-sections">
-            <!-- Revenue Overview Section -->
             <div class="dashboard-section revenue-overview">
-                <h2>Revenu Overview</h2>
-                <!-- Revenue chart or data will go here -->
+                <h2>Revenue Overview</h2>
+                <div class="chart-container">
+                    <canvas id="revenueChart"></canvas>
+                </div>
             </div>
 
-            <!-- Popular Items Section -->
             <div class="dashboard-section popular-items">
                 <h2>Popular Items</h2>
 
                 <div class="item-list">
-                    <!-- Item 1 -->
-                    <div class="popular-item">
-                        <div class="item-image">
-                            <img src="{{ asset('images/sandwish.png') }}" alt="Cheeseburger">
+                    @foreach($popularItems as $item)
+                        <div class="popular-item">
+                            <div class="item-image">
+                                <img src="{{ asset('storage/' . $item->image) }}" alt="{{$item->name}}">
+                            </div>
+                            <div class="item-details">
+                                <span class="item-name">{{$item->name}}</span>
+                            </div>
+                            <div class="item-price">{{$item->price}} dh</div>
                         </div>
-                        <div class="item-details">
-                            <span class="item-name">Cheeseburger</span>
-                        </div>
-                        <div class="item-price">35 dh</div>
-                    </div>
-
-                    <!-- Item 2 -->
-                    <div class="popular-item">
-                        <div class="item-image">
-                            <img src="{{ asset('images/sandwish.png') }}" alt="Pancakes">
-                        </div>
-                        <div class="item-details">
-                            <span class="item-name">Pancakes</span>
-                        </div>
-                        <div class="item-price">25 dh</div>
-                    </div>
-
-                    <!-- Item 3 -->
-                    <div class="popular-item">
-                        <div class="item-image">
-                            <img src="{{ asset('images/sandwish.png') }}" alt="Cheeseburger">
-                        </div>
-                        <div class="item-details">
-                            <span class="item-name">Cheeseburger</span>
-                        </div>
-                        <div class="item-price">35 dh</div>
-                    </div>
-
-                    <!-- Item 4 -->
-                    <div class="popular-item">
-                        <div class="item-image">
-                            <img src="{{ asset('images/sandwish.png') }}" alt="Sand">
-                        </div>
-                        <div class="item-details">
-                            <span class="item-name">Sand</span>
-                        </div>
-                        <div class="item-price">35 dh</div>
-                    </div>
-
-                    <!-- Item 5 -->
-                    <div class="popular-item">
-                        <div class="item-image">
-                            <img src="{{ asset('images/sandwish.png') }}" alt="Cheeseburger">
-                        </div>
-                        <div class="item-details">
-                            <span class="item-name">Cheeseburger</span>
-                        </div>
-                        <div class="item-price">40 dh</div>
-                    </div>
+                    @endforeach
                 </div>
             </div>
         </div>
@@ -244,7 +197,12 @@
 
     .revenue-overview {
         width: 60%;
-        /* Styles for revenue overview section */
+    }
+
+    .chart-container {
+        height: 300px;
+        width: 100%;
+        margin-top: 1rem;
     }
 
     .popular-items {
@@ -296,3 +254,75 @@
         color: #333;
     }
 </style>
+
+<!-- Include Chart.js library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get the canvas element
+        const ctx = document.getElementById('revenueChart').getContext('2d');
+
+        // Get data from the backend
+        const labels = {!! json_encode($weeklyRevenueData['labels']) !!};
+        const revenueData = {!! json_encode($weeklyRevenueData['revenues']) !!};
+
+        const data = {
+            labels: labels,
+            datasets: [{
+                label: 'Weekly Revenue (dh)',
+                data: revenueData,
+                fill: false,
+                borderColor: '#FF7043',
+                tension: 0.1,
+                pointBackgroundColor: '#FF7043',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 5
+            }]
+        };
+
+        // Chart configuration
+        const config = {
+            type: 'line',
+            data: data,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return value + ' dh';
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.parsed.y + ' dh';
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        // Create the chart
+        new Chart(ctx, config);
+    });
+</script>

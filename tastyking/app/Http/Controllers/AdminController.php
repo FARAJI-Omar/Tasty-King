@@ -6,17 +6,64 @@ use Illuminate\Http\Request;
 use App\Models\Meal;
 use App\Models\Category;
 use App\Models\User;
+use App\Models\Order;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class AdminController extends Controller
 {
     public function showDashboard()
     {
+        $totalRevenue = Order::sum('total');
+        $popularItems = Meal::orderBy('order_count', 'desc')->take(5)->get();
         $totalMeals = Meal::count();
         $totalUsers = User::count();
+        $totalOrders = Order::count();
         $activeUsers = User::where('status', 'active')->count();
-        $active = $activeUsers / $totalUsers * 100;
-        return view('admin.dashboard', compact('totalUsers', 'totalMeals', 'active'));
+        $active = $totalUsers > 0 ? round(($activeUsers / $totalUsers) * 100, 1) : 0;
+
+        $weeklyRevenueData = $this->getWeeklyRevenueData();
+
+        return view('admin.dashboard', compact(
+            'totalUsers',
+            'totalMeals',
+            'active',
+            'totalOrders',
+            'popularItems',
+            'totalRevenue',
+            'weeklyRevenueData'
+        ));
+    }
+
+    /**
+     * Get the revenue data for the last 7 days
+     *
+     * @return array
+     */
+    private function getWeeklyRevenueData()
+    {
+        $today = Carbon::today();
+        $startDate = $today->copy()->subDays(6);
+
+        $dates = [];
+        $revenues = [];
+        $labels = [];
+
+        for ($i = 0; $i < 7; $i++) {
+            $date = $startDate->copy()->addDays($i);
+            $dates[] = $date->format('Y-m-d');
+            $labels[] = $date->format('D');
+        }
+
+        foreach ($dates as $date) {
+            $dailyRevenue = Order::whereDate('created_at', $date)->sum('total');
+            $revenues[] = $dailyRevenue;
+        }
+
+        return [
+            'labels' => $labels,
+            'revenues' => $revenues
+        ];
     }
 
     public function adminMenu(Request $request)
@@ -25,7 +72,6 @@ class AdminController extends Controller
 
         $mealsQuery = Meal::query();
 
-        // Filter by category if a valid category ID is provided
         if ($categoryId && $categoryId != 'all') {
             $mealsQuery->where('category_id', $categoryId);
         }
@@ -78,7 +124,6 @@ class AdminController extends Controller
 
     public function createCategory(Request $request)
     {
-        //add new category
         $request->validate([
             'name' => 'required|string|max:255',
         ]);

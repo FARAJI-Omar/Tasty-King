@@ -7,7 +7,8 @@ use App\Http\Controllers\MealController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaypalController;
 use App\Http\Middleware\RoleClient;
 use App\Http\Middleware\RoleChef;
 use App\Http\Middleware\RoleAdmin;
@@ -34,15 +35,19 @@ Route::middleware('auth')->group(function () {
         Route::put('profile/update-info', [CLientController::class, 'editPersonalInfo'])->name('profile.update-info');
         Route::put('profile/update-password', [CLientController::class, 'editPassword'])->name('profile.update-password');
         Route::delete('profile/delete-account', [CLientController::class, 'deleteAccount'])->name('profile.delete-account');
-        Route::get(('item-details/{id}'), [ClientController::class, 'showItemDetails'])->name('item-details');
+        Route::get(('item-details/{id}'), [MealController::class, 'showItemDetails'])->name('item-details');
 
-        Route::get('cart', [CartController::class, 'index'])->name('cart');
+        Route::get('cart', [CartController::class, 'viewCart'])->name('cart');
         Route::post('add-to-cart', [CartController::class, 'addToCart'])->name('add-to-cart');
         Route::delete('remove-from-cart/{id}', [CartController::class, 'removeFromCart'])->name('remove-from-cart');
         Route::patch('update-cart/{id}', [CartController::class, 'updateQuantity'])->name('update-cart');
 
         Route::get('checkout', [CheckoutController::class, 'index'])->name('checkout');
         Route::post('checkout', [CheckoutController::class, 'placeOrder'])->name('place-order');
+        Route::get('order-success', [OrderController::class, 'success'])->name('order.success');
+
+        Route::get('order-tracking', [OrderController::class, 'orderTracking'])->name('order-tracking');
+        Route::post('order/{id}/update-status', [OrderController::class, 'updateOrderStatus'])->name('order.update-status');
     });
 
     // chef routes
@@ -67,12 +72,3 @@ Route::middleware('auth')->group(function () {
         Route::delete('admin/delete-category/{id}', [AdminController::class, 'deleteCategory'])->name('delete-category');
     });
 });
-
-
-
-
-
-
-Route::get('order-tracking', function () {
-    return view('orderTracking');
-})->name('order-tracking');

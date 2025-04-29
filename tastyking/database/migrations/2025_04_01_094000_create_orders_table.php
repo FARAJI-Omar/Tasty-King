@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('items_data')->nullable(); // JSON string of items
             $table->text('delivery_address')->nullable();
             $table->text('delivery_message')->nullable();
-            $table->string('payment_method')->nullable();
+            $table->enum('payment_method', ['cod', 'paypal'])->default('cod');
             $table->timestamps();
             
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

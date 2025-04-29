@@ -13,10 +13,12 @@ class Order extends Model
         'user_id',
         'total',
         'status',
+        'payment_status',
         'items_data',
         'delivery_address',
         'delivery_message',
-        'payment_method'
+        'payment_method',
+        'paypal_order_id'
     ];
 
     protected $casts = [

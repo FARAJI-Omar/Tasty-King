@@ -1,6 +1,15 @@
 @extends('layouts.app')
 
 @section('content')
+
+<div class="message-container">
+    @if(session('success'))
+    <div class="success-message">
+        <i class="fas fa-check-circle"></i>
+        <span>{{ session('success') }}</span>
+    </div>
+    @endif
+</div>
 <div class="img-title" style="margin: 0 auto;">
     <div class="image">
         <img src="{{ asset('storage/' . $meal->image) }}" alt="{{ $meal->name }}">
@@ -282,4 +291,58 @@
     .cart-btn .price {
         margin-left: auto;
     }
+
+    .message-container {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .success-message {
+        background-color: #D4EDDA;
+        color: #155724;
+        border: 1px solid #C3E6CB;
+        border-radius: 8px;
+        padding: 15px 20px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        max-width: 80%;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .success-message i {
+        color: #28A745;
+        font-size: 20px;
+        margin-right: 10px;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Auto-hide the message after 3 seconds */
+    @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
 </style>
+
+<script>
+    // Auto-hide success message after 3 seconds
+    document.addEventListener('DOMContentLoaded', function() {
+        const successMessage = document.querySelector('.success-message');
+        if (successMessage) {
+            setTimeout(function() {
+                successMessage.style.animation = 'fadeOut 0.5s ease-in-out forwards';
+                setTimeout(function() {
+                    successMessage.style.display = 'none';
+                }, 500);
+            }, 3000);
+        }
+    });
+</script>

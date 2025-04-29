@@ -75,7 +75,10 @@
                                         <button type="submit" class="received-btn">Mark as Received</button>
                                     </form>
                                 @endif
-                                <button class="report-btn">Report Issue</button>
+
+                                @if($order->status == 'received' || $order->status == 'delivered')
+                                    <button class="report-btn" onclick="showReportModal(this)">Add Review</button>
+                                @endif
                             </div>
 
                             <div class="order-total">
@@ -91,7 +94,7 @@
 </div>
 
 <div class="report-modal" id="reportModal">
-    <div class="modal-overlay"></div>
+    <div class="modal-overlay" onclick="closeReportModal()"></div>
     <div class="report-form-container">
         <div class="report-form">
             <div class="form-header">
@@ -124,42 +127,47 @@
 
 
 <script>
+    // Auto-hide success message after 3 seconds
     setTimeout(function() {
-                document.getElementById('successMessage').style.display = 'none';
+        var successMessage = document.getElementById('successMessage');
+        if (successMessage) {
+            successMessage.style.display = 'none';
+        }
     }, 3000);
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.report-btn').forEach(button => {
-            button.addEventListener('click', function(event) {
-                event.stopPropagation();
 
-                const orderCard = this.closest('.order-card');
-                const orderId = orderCard.querySelector('.order-number').textContent;
-                const orderStatus = orderCard.querySelector('.status-badge').textContent;
+    // Simple function to show report modal
+    function showReportModal(button) {
+        // Get the order info
+        var orderCard = button.closest('.order-card');
+        var orderId = orderCard.querySelector('.order-number').textContent;
+        var orderStatus = orderCard.querySelector('.status-badge').textContent;
 
-                document.getElementById('order-id').value = orderId;
-                document.getElementById('order-status').value = orderStatus;
+        // Set values in the form
+        document.getElementById('order-id').value = orderId;
+        document.getElementById('order-status').value = orderStatus;
 
-                document.getElementById('reportModal').classList.add('show');
-            });
-        });
-
-        document.querySelector('.modal-overlay').addEventListener('click', closeReportModal);
-    });
-
-    function toggleOrderDetails(header) {
-        const details = header.nextElementSibling;
-        details.classList.toggle('hidden');
-
-        const icon = header.querySelector('.toggle-icon');
-        icon.classList.toggle('rotate');
+        // Show the modal
+        document.getElementById('reportModal').style.display = 'flex';
     }
 
+    // Simple function to close report modal
     function closeReportModal() {
-        document.getElementById('reportModal').classList.remove('show');
+        document.getElementById('reportModal').style.display = 'none';
     }
 
+    // Simple function to toggle order details
+    function toggleOrderDetails(header) {
+        var details = header.nextElementSibling;
+        if (details.style.display === 'none' || details.classList.contains('hidden')) {
+            details.style.display = 'block';
+            details.classList.remove('hidden');
+            header.querySelector('.toggle-icon').style.transform = 'rotate(180deg)';
+        } else {
+            details.style.display = 'none';
+            details.classList.add('hidden');
+            header.querySelector('.toggle-icon').style.transform = 'rotate(0deg)';
+        }
+    }
 </script>
 
 <style>
@@ -260,7 +268,7 @@
     }
 
     .status-badge.preparing {
-        background-color: #FFF3E0;
+        background-color: red;
         color: #E65100;
     }
 
@@ -270,12 +278,12 @@
     }
 
     .status-badge.delivered {
-        background-color: #E8F5E9;
+        background-color: #ffb9246e;
         color: #1B5E20;
     }
 
     .status-badge.received {
-        background-color: #E0F7FA;
+        background-color: #56eb59de;
         color: #006064;
     }
 
@@ -438,9 +446,10 @@
         align-items: center;
     }
 
-    .report-modal.show {
+    /* This style is no longer needed as we're using direct style manipulation */
+    /* .report-modal.show {
         display: flex;
-    }
+    } */
 
     .modal-overlay {
         position: absolute;

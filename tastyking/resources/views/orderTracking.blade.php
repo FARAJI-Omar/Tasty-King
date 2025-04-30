@@ -80,8 +80,13 @@
                             </div>
 
                             <div class="order-total">
-                                <span class="total-label">Total:</span>
-                                <span class="total-value">{{ number_format($order->total, 2) }} dh</span>
+                                <a href="{{ route('generate-pdf', $order->id) }}" class="download-receipt-btn">
+                                    <i class="fas fa-file-pdf"></i> Download Receipt
+                                </a>
+                                <div class="total-info">
+                                    <span class="total-label">Total:</span>
+                                    <span class="total-value">{{ number_format($order->total, 2) }} dh</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -106,8 +111,6 @@
         }
     }, 3000);
 
-
-
     // Simple function to toggle order details
     function toggleOrderDetails(header) {
         var details = header.nextElementSibling;
@@ -121,6 +124,27 @@
             header.querySelector('.toggle-icon').style.transform = 'rotate(0deg)';
         }
     }
+
+    // Store the current order statuses when the page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        // Create an object to store order IDs and their statuses
+        window.orderStatuses = {};
+
+        // Get all order cards
+        const orderCards = document.querySelectorAll('.order-card');
+
+        // Store each order's current status
+        orderCards.forEach(function(card) {
+            const orderId = card.querySelector('.order-number').textContent.replace('Order #', '');
+            const statusBadge = card.querySelector('.status-badge');
+            const currentStatus = statusBadge.textContent.toLowerCase();
+
+            window.orderStatuses[orderId] = currentStatus;
+        });
+
+        // Check for status changes every 5 seconds
+        setInterval(checkOrderStatuses, 5000);
+    });
 </script>
 
 <style>
@@ -526,11 +550,16 @@
 
     .order-total {
         display: flex;
-        justify-content: flex-end;
+        justify-content: space-between;
         align-items: center;
         margin-top: 1rem;
         padding-top: 1rem;
         border-top: 1px dashed #e0e0e0;
+    }
+
+    .total-info {
+        display: flex;
+        align-items: center;
     }
 
     .total-label {
@@ -543,6 +572,32 @@
         font-weight: 700;
         color: #F17228;
         font-size: 1.1rem;
+    }
+
+    .download-receipt-btn {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .download-receipt-btn:hover {
+        background-color: #388E3C;
+        color: white;
+        text-decoration: none;
+    }
+
+    .download-receipt-btn i {
+        font-size: 1rem;
     }
 
     .no-orders-message {

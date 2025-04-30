@@ -44,6 +44,7 @@ Route::middleware('auth')->group(function () {
 
         Route::get('checkout', [CheckoutController::class, 'index'])->name('checkout');
         Route::post('checkout', [CheckoutController::class, 'placeOrder'])->name('place-order');
+        Route::get('generate-pdf/{id}', [CheckoutController::class, 'generatePDF'])->name('generate-pdf');
         Route::get('order-success', [OrderController::class, 'success'])->name('order.success');
 
         Route::get('order-tracking', [OrderController::class, 'orderTracking'])->name('order-tracking');

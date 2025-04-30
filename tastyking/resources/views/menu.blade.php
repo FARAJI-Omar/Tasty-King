@@ -23,6 +23,10 @@
     @endforeach
 </div>
 
+<div class="pagination-container">
+    {{ $meals->links('vendor.pagination.custom') }}
+</div>
+
 <hr>
 
 
@@ -139,6 +143,55 @@
         font-weight: 500;
         margin: 0;
         font-family: 'Poppins', sans-serif;
+    }
+
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        margin: 2rem 0;
+    }
+
+    .custom-pagination {
+        display: flex;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        gap: 0.5rem;
+    }
+
+    .custom-pagination li {
+        display: inline-block;
+    }
+
+    .custom-pagination li a,
+    .custom-pagination li span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background-color: #FFF8DC;
+        color: #333;
+        border-radius: 8px;
+        text-decoration: none;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .custom-pagination li.active span {
+        background-color: #FFB30E;
+        color: white;
+    }
+
+    .custom-pagination li a:hover {
+        background-color: #FFE4B5;
+    }
+
+    .custom-pagination li.disabled span {
+        background-color: #f5f5f5;
+        color: #aaa;
+        cursor: not-allowed;
     }
 
 

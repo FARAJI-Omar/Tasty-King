@@ -6,6 +6,7 @@ use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+
 class OrderController extends Controller
 {
     public function index()
@@ -38,4 +39,6 @@ class OrderController extends Controller
 
         return redirect()->back()->with('success', 'Order ' . $order->id . ' marked as received successfully');
     }
+
+
 }

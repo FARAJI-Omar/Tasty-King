@@ -19,12 +19,6 @@
             </div>
 
 
-            <div class="search-bar">
-            <i class="fa-solid fa-magnifying-glass" style="color: #ffb30e;"></i>
-            <input type="text" placeholder="Search Food" />
-            </div>
-
-
             @auth
                 <div class="profile-container">
                     <button id="profile-button" class="profile-button">
@@ -111,32 +105,6 @@
   }
 
 
-  .search-bar {
-    display: flex;
-    align-items: center;
-    background-color: white;
-    padding: 6px 8px;
-    border-radius: 8px;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.06);
-    width: 200px;
-    margin-left: 30px;
-  }
-
-  .search-bar input {
-    border: none;
-    outline: none;
-    margin-left: 8px;
-    font-size: 13px;
-    color: #555;
-    width: 100%;
-  }
-
-  .search-icon {
-    color: #fbbf24;
-    font-size: 16px;
-  }
-
-
   .login-btn {
     background-color: #fff1c7;
     color: #f59e0b;
@@ -197,6 +165,7 @@
       display: flex;
       align-items: center;
       position: relative;
+      left: 18rem;
   }
 
   .profile-button {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\UpdateOrderStatusJob;
 use App\Models\Cart;
 use App\Models\Meal;
 use App\Models\Order;
@@ -67,6 +68,8 @@ class CheckoutController extends Controller
         $order->payment_method = $request->payment_method;
         $order->save();
 
+        UpdateOrderStatusJob::dispatch($order->id)->delay(now()->addSeconds(5));
+
         $cartItems = Cart::where('user_id', Auth::id())->get();
         foreach ($cartItems as $item) {
             $meal = Meal::find($item->meal_id);
@@ -78,6 +81,6 @@ class CheckoutController extends Controller
 
         Cart::where('user_id', Auth::id())->delete();
 
-        return redirect()->route('order.success');
+        return redirect()->route('order-tracking');
     }
 }

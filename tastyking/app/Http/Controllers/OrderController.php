@@ -36,6 +36,6 @@ class OrderController extends Controller
         $order->status = 'received';
         $order->save();
 
-        return redirect()->back()->with('success', 'Order' . $order->id . 'marked as received successfully');
+        return redirect()->back()->with('success', 'Order ' . $order->id . ' marked as received successfully');
     }
 }

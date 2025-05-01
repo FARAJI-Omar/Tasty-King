@@ -92,8 +92,8 @@
     align-items: center;
     padding: 15px 30px;
     width: 80%;
-    margin-right: 60px;
-    margin-left: 180px;
+    margin: 0 auto;
+    gap: 20px;
   }
 
 
@@ -127,8 +127,7 @@
 
   .carte-container {
     display: flex;
-    margin-left: -10rem;
-    margin-right: 10rem;
+    margin-left: 20px;
   }
 
   .carte-icon {
@@ -165,7 +164,7 @@
       display: flex;
       align-items: center;
       position: relative;
-      left: 18rem;
+      margin-left: auto;
   }
 
   .profile-button {

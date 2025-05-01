@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Order;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class AdminController extends Controller
 {
@@ -162,5 +163,33 @@ class AdminController extends Controller
 
         return redirect()->back()
             ->with('success', 'Category "' . $categoryName . '" has been deleted successfully! ' . $message);
+    }
+
+    public function generatePDF()
+    {
+        $totalRevenue = Order::sum('total');
+        $popularItems = Meal::orderBy('order_count', 'desc')->take(5)->get();
+        $totalMeals = Meal::count();
+        $totalUsers = User::count();
+        $totalOrders = Order::count();
+        $activeUsers = User::where('status', 'active')->count();
+        $active = $totalUsers > 0 ? round(($activeUsers / $totalUsers) * 100, 1) : 0;
+        $weeklyRevenueData = $this->getWeeklyRevenueData();
+        $date = Carbon::now()->format('F d, Y - g:i A');
+
+        $data = [
+            'totalRevenue' => $totalRevenue,
+            'popularItems' => $popularItems,
+            'totalMeals' => $totalMeals,
+            'totalUsers' => $totalUsers,
+            'totalOrders' => $totalOrders,
+            'active' => $active,
+            'weeklyRevenueData' => $weeklyRevenueData,
+            'date' => $date
+        ];
+
+        $pdf = Pdf::loadView('admin.reportPDF', $data);
+
+        return $pdf->download('TastyKing-Weekly-Report-' . Carbon::now()->format('Y-m-d') . '.pdf');
     }
 }

@@ -41,7 +41,9 @@
 
         <div class="report-section">
             <button class="download-report-btn">
-                Download Report <i class="fas fa-download"></i>
+                <a href="{{ route('generate-pdf') }}">
+                    Download Report <i class="fas fa-download"></i>
+                </a>
             </button>
         </div>
 

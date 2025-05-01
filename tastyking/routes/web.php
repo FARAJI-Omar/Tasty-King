@@ -26,6 +26,8 @@ Route::post('/register', [UserAuthController::class, 'register'])->name('registe
 // require auth
 Route::middleware('auth')->group(function () {
     Route::get('/logout', [UserAuthController::class, 'logout'])->name('logout');
+    Route::get('/search-meals/{name}', [MealController::class, 'search'])->name('search.meals');
+
 
     // client routes
     Route::middleware(RoleClient::class)->group(function () {
@@ -74,5 +76,6 @@ Route::middleware('auth')->group(function () {
         Route::get('admin/settings', [AdminController::class, 'settings'])->name('settings');
         Route::post('admin/create-category', [AdminController::class, 'createCategory'])->name('create-category');
         Route::delete('admin/delete-category/{id}', [AdminController::class, 'deleteCategory'])->name('delete-category');
+        Route::get('generate-pdf', [AdminController::class, 'generatePDF'])->name('generate-pdf');
     });
 });

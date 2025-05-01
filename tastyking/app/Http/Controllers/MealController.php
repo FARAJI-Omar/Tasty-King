@@ -124,4 +124,11 @@ class MealController extends Controller
         $reviews = Review::where('meal_id', $id)->get();
         return view('itemDetails', compact('meal', 'reviews'));
     }
+
+    public function search($name)
+    {
+        $meals = Meal::where('name', 'LIKE', "%{$name}%")->get();
+        
+        return response()->json($meals);
+    }
 }

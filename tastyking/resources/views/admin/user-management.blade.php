@@ -156,7 +156,7 @@
     }
 
     .admin-user-management {
-        padding: 2rem;
+        padding: 4rem 2rem;
         font-family: 'Poppins', sans-serif;
     }
 

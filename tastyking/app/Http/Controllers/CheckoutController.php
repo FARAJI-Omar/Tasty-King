@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\UpdateOrderStatusJob;
-use App\Jobs\GeneratePDFJob;
 use App\Models\Cart;
 use App\Models\Meal;
 use App\Models\Order;
@@ -22,7 +21,6 @@ class CheckoutController extends Controller
             return redirect()->route('menu')->with('error', 'Your cart is empty. Please add items before checkout.');
         }
 
-        // Check for existing order in session
         if ($request->session()->has('checkout_order_id')) {
             $order = Order::find($request->session()->get('checkout_order_id'));
             if ($order && $order->user_id == Auth::id() && !$order->delivery_address) {
@@ -57,7 +55,6 @@ class CheckoutController extends Controller
             'items_data' => json_encode($itemsData)
         ]);
 
-        // Store order ID in session
         $request->session()->put('checkout_order_id', $order->id);
 
         return view('checkout', compact('total', 'order'));
@@ -77,7 +74,6 @@ class CheckoutController extends Controller
             ->where('user_id', Auth::id())
             ->first();
 
-        // Check if order already has a delivery address (already processed)
         if ($order && $order->delivery_address) {
             return redirect()->route('order-tracking');
         }
@@ -87,7 +83,6 @@ class CheckoutController extends Controller
         $order->payment_method = $request->payment_method;
         $order->save();
 
-        // Clear the checkout order ID from session
         $request->session()->forget('checkout_order_id');
 
         UpdateOrderStatusJob::dispatch($order->id)->delay(now()->addSeconds(5));

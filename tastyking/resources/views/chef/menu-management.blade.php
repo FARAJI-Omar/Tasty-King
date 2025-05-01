@@ -18,7 +18,7 @@
 
         <div class="menu-controls">
             <div class="search-container">
-                <input type="text" class="search-input" placeholder="Search Menu Item ..." />
+                <input type="text" id="search-input" class="search-input" placeholder="Search Menu Item ..." />
             </div>
 
             <div class="category-filter">
@@ -829,6 +829,54 @@
             });
         }
     });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('search-input');
+    const mealsContainer = document.querySelector('.menu-items');
+
+    searchInput.addEventListener('input', function() {
+        const name = searchInput.value.trim();
+
+        if (name.length > 0) {
+            fetch(`/search-meals/${name}`)
+                .then(response => response.json())
+                .then(meals => {
+                    mealsContainer.innerHTML = '';
+
+                    if (meals.length === 0) {
+                        mealsContainer.innerHTML = '<p>No meals found</p>';
+                    } else {
+                        meals.forEach(meal => {
+                            mealsContainer.innerHTML += `
+                                <div class="menu-item-card">
+                                    <div class="item-image">
+                                        <img src="/storage/${meal.image}">
+                                    </div>
+                                    <div class="item-details">
+                                        <div class="flex justify-between">
+                                            <h3 class="item-name">${meal.name}</h3>
+                                            <h2>${meal.price} dh</h2>
+                                        </div>
+                                        <div class="item-actions">
+                                            <button type="button" class="edit-btn" onclick="showModal('editModal-${meal.id}')">Edit</button>
+                                            <button type="button" class="remove-btn" onclick="showDeleteConfirmation(${meal.id})">Remove</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        } else {
+            mealsContainer.innerHTML = '<p>Type to search meals...</p>';
+        }
+    });
+});
 </script>
 
 

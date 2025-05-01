@@ -176,7 +176,7 @@
     }
 
     .admin-settings {
-        padding: 2rem;
+        padding: 4rem 2rem;
         font-family: 'Poppins', sans-serif;
     }
 

@@ -103,7 +103,6 @@
 
 
 <script>
-    // Auto-hide success message after 3 seconds
     setTimeout(function() {
         var successMessage = document.getElementById('successMessage');
         if (successMessage) {
@@ -111,7 +110,6 @@
         }
     }, 3000);
 
-    // Simple function to toggle order details
     function toggleOrderDetails(header) {
         var details = header.nextElementSibling;
         if (details.style.display === 'none' || details.classList.contains('hidden')) {
@@ -125,15 +123,11 @@
         }
     }
 
-    // Store the current order statuses when the page loads
     document.addEventListener('DOMContentLoaded', function() {
-        // Create an object to store order IDs and their statuses
         window.orderStatuses = {};
 
-        // Get all order cards
         const orderCards = document.querySelectorAll('.order-card');
 
-        // Store each order's current status
         orderCards.forEach(function(card) {
             const orderId = card.querySelector('.order-number').textContent.replace('Order #', '');
             const statusBadge = card.querySelector('.status-badge');
@@ -142,7 +136,6 @@
             window.orderStatuses[orderId] = currentStatus;
         });
 
-        // Check for status changes every 5 seconds
         setInterval(checkOrderStatuses, 5000);
     });
 </script>
@@ -423,11 +416,6 @@
         align-items: center;
     }
 
-    /* This style is no longer needed as we're using direct style manipulation */
-    /* .report-modal.show {
-        display: flex;
-    } */
-
     .modal-overlay {
         position: absolute;
         top: 0;
@@ -623,28 +611,4 @@
         to { opacity: 1; transform: translateY(0); }
     }
 
-    @media (max-width: 600px) {
-        .order-header {
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .status-badge {
-            margin-top: 0.5rem;
-        }
-
-        .progress-track {
-            margin: 0;
-        }
-
-        .step-icon {
-            width: 40px;
-            height: 40px;
-            font-size: 1rem;
-        }
-
-        .step-label {
-            font-size: 0.7rem;
-        }
-    }
 </style>

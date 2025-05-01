@@ -5,6 +5,9 @@
     <h1>Our Menu</h1><br>
     <h2>Discover our carefully curated selection of dishes, prepared with the finest ingredients and served with love.</h2>
 </div>
+<div class="search-container">
+    <input type="text" id="search-input" class="search-input" placeholder="Search Menu Item ...">
+</div>
 <hr>
 <div class="categories">
     <a href="{{ route('menu') }}" class="category-btn {{ !isset($selectedCategory) || $selectedCategory == 'all' ? 'active' : '' }}" style="opacity: {{ !isset($selectedCategory) || $selectedCategory == 'all' ? '1' : '0.6' }};">All</a>
@@ -34,7 +37,48 @@
 @include('layouts.footer')
 @endsection
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('search-input');
+    const mealsContainer = document.querySelector('.menu-items');
+    const originalContent = mealsContainer.innerHTML;
+    const paginationContainer = document.querySelector('.pagination-container');
 
+    searchInput.addEventListener('input', function() {
+        const name = searchInput.value.trim();
+
+        if (name.length > 0) {
+            fetch(`/search-meals/${name}`)
+                .then(response => response.json())
+                .then(meals => {
+                    mealsContainer.innerHTML = '';
+
+                    if (meals.length === 0) {
+                        mealsContainer.innerHTML = '<p style="text-align: center; width: 100%; margin-top: 2rem;">No meals found</p>';
+                        paginationContainer.style.display = 'none';
+                    } else {
+                        meals.forEach(meal => {
+                            mealsContainer.innerHTML += `
+                                <a href="/item-details/${meal.id}" class="item-card">
+                                    <img src="/storage/${meal.image}" alt="${meal.name}">
+                                    <h2>${meal.name}</h2>
+                                    <p class="item-price">${meal.price} dh</p>
+                                </a>
+                            `;
+                        });
+                        paginationContainer.style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        } else {
+            mealsContainer.innerHTML = originalContent;
+            paginationContainer.style.display = 'flex';
+        }
+    });
+});
+</script>
 
 <style>
     .our_menu {
@@ -111,7 +155,7 @@
         justify-content: center;
         margin: 0 auto;
         width: 250px;
-        height: 300px; /* Fixed height for all cards */
+        height: 300px; 
         text-decoration: none;
         cursor: pointer;
         transition: transform 0.3s ease;
@@ -121,7 +165,7 @@
         box-shadow: 2px 6px 12px #FFCC00;
         border-radius: 15px;
         width: 250px;
-        height: 200px; /* Fixed height for all images */
+        height: 200px;
         object-fit: cover;
     }
 
@@ -194,5 +238,27 @@
         cursor: not-allowed;
     }
 
+    .search-container {
+        display: flex;
+        justify-content: center;
+        margin: 0rem auto;
+        width: 30%;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 0.5rem 1rem;
+        border: #FF7043 1px solid;
+        border-radius: 15px;
+        background-color: #f5f5f5;
+        font-size: 0.9rem;
+        color: #333;
+    }
+
+    .search-input::placeholder {
+        color: #999;
+        font-size: 0.9rem;
+        font-family: 'Poppins', sans-serif;
+    }
 
 </style>

@@ -248,7 +248,6 @@
 
 /* How it works section */
 .howitworks {
-    background: linear-gradient(to bottom, #FFB30E 5%, #FFF8DC 30%, #FFF8DC 45%);
     padding: 5rem 0;
     text-align: center;
 }

@@ -75,18 +75,18 @@
                                         <button type="submit" class="received-btn">Mark as Received</button>
                                     </form>
                                 @endif
-
-
                             </div>
 
                             <div class="order-total">
-                                <a href="{{ route('generate-pdf', $order->id) }}" class="download-receipt-btn">
+                            @if($order->status == 'received')
+                                <a href="{{ route('generating-pdf', $order->id) }}" class="download-receipt-btn">
                                     <i class="fas fa-file-pdf"></i> Download Receipt
                                 </a>
                                 <div class="total-info">
                                     <span class="total-label">Total:</span>
                                     <span class="total-value">{{ number_format($order->total, 2) }} dh</span>
                                 </div>
+                            @endif
                             </div>
                         </div>
                     </div>
@@ -237,9 +237,9 @@
         font-weight: 500;
     }
 
-    .status-badge.preparing {
-        background-color: red;
-        color: #E65100;
+    .status-badge.waiting {
+        background-color: #FFF0C2;
+        color: #FFB30E;
     }
 
     .status-badge.on-the-way {
@@ -248,13 +248,18 @@
     }
 
     .status-badge.delivered {
-        background-color: #ffb9246e;
-        color: #1B5E20;
+        background-color: #E1F5FE;
+        color: #0288D1;
     }
 
     .status-badge.received {
         background-color: #56eb59de;
         color: #006064;
+    }
+
+    .status-badge.cancelled {
+        background-color: #FFEBEE;
+        color: #D32F2F;
     }
 
     .order-details {

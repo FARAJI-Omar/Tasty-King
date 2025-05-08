@@ -6,7 +6,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    protected $fillable = ['name', 'email', 'photo', 'password', 'primary_address', 'status', 'role'];
+    protected $fillable = ['name', 'email', 'photo', 'password', 'status', 'role'];
 
     protected $hidden = ['password'];
 
@@ -14,4 +14,15 @@ class User extends Authenticatable
     {
         return $this->hasMany(Review::class);
     }
+
+    public function order()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    public function cart()
+    {
+        return $this->hasMany(Cart::class);
+    }
+
 }

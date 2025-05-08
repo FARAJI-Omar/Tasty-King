@@ -64,67 +64,33 @@
     </div>
 </div>
 
-<div class="promotions">
-    <h1 class="title">Promotions</h1>
-    <div class="promotion-cards">
-        <div class="promo-card">
-            <div class="promo-image">
-                <img src="{{ asset('images/dish1.png') }}">
-                <div class="discount-badge">25 <span>%<br>OFF</span></div>
-            </div>
-            <div class="promo-title">Flat Hill Slingback</div>
-        </div>
-        <div class="promo-card">
-            <div class="promo-image">
-                <img src="{{ asset('images/dish1.png') }}">
-                <div class="discount-badge">30 <span>%<br>OFF</span></div>
-            </div>
-            <div class="promo-title">Ocean Blue Ring</div>
-        </div>
-        <div class="promo-card">
-            <div class="promo-image">
-                <img src="{{ asset('images/dish1.png') }}">
-                <div class="discount-badge">15 <span>%<br>OFF</span></div>
-            </div>
-            <div class="promo-title">Brown Leathered Wallet</div>
-        </div>
-        <div class="promo-card">
-            <div class="promo-image">
-                <img src="{{ asset('images/dish1.png') }}" >
-                <div class="discount-badge">20 <span>%<br>OFF</span></div>
-            </div>
-            <div class="promo-title">Riverside Wristwatch</div>
-        </div>
-    </div>
-</div>
 
 <div class="popular-items">
     <h2 class="section-title">Popular items</h2>
 
     <div class="popular-items-slider">
-        <button class="slider-arrow prev-arrow"><i class="fas fa-chevron-left"></i></button>
         <div class="popular-items-container">
             <div class="popular-item">
                 <div class="item-image">
-                    <img src="{{ asset('images/sandwish.png') }}" alt="Cheese Burger">
+                    <img src="{{ asset('images/1.jpg') }}" alt="Cheese Burger">
                 </div>
-                <h3 class="item-name">Cheese Burger</h3>
+                <h3 class="item-name">Honey garlic chicken</h3>
                 <p class="item-price">40 dh</p>
                 <a href="#" class="order-button">Order now</a>
             </div>
             <div class="popular-item">
                 <div class="item-image">
-                    <img src="{{ asset('images/sandwish.png') }}" alt="Toffe's Cake">
+                    <img src="{{ asset('images/2.jpg') }}" alt="Toffe's Cake">
                 </div>
-                <h3 class="item-name">Toffe's Cake</h3>
+                <h3 class="item-name">Fried broccoli</h3>
                 <p class="item-price">30 dh</p>
                 <a href="#" class="order-button">Order now</a>
             </div>
             <div class="popular-item">
                 <div class="item-image">
-                    <img src="{{ asset('images/sandwish.png') }}" alt="Crispy Sandwich">
+                    <img src="{{ asset('images/3.jpg') }}" alt="Crispy Sandwich">
                 </div>
-                <h3 class="item-name">Crispy Sandwich</h3>
+                <h3 class="item-name">Busy Weeknights</h3>
                 <p class="item-price">20 dh</p>
                 <a href="#" class="order-button">Order now</a>
             </div>
@@ -132,12 +98,11 @@
                 <div class="item-image">
                     <img src="{{ asset('images/sandwish.png') }}" alt="Thai Soup">
                 </div>
-                <h3 class="item-name">Thai Soup</h3>
+                <h3 class="item-name">Crispy sandwich</h3>
                 <p class="item-price">15 dh</p>
                 <a href="#" class="order-button">Order now</a>
             </div>
         </div>
-        <button class="slider-arrow next-arrow"><i class="fas fa-chevron-right"></i></button>
     </div>
 </div>
 
@@ -236,7 +201,7 @@
     background-color: #FFB30E;
     overflow: hidden;
     position: relative;
-    min-height: 400px; /* Ensure enough height for the image */
+    min-height: 400px;
 }
 
 .container {
@@ -315,9 +280,9 @@
     position: relative;
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* Align items to the top */
+    align-items: flex-start;
     overflow: hidden;
-    height: 450px; /* Set a fixed height */
+    height: 450px;
 }
 
 .food-image {
@@ -326,7 +291,7 @@
     object-fit: cover;
     border-radius: 50%;
     position: absolute;
-    bottom: -50px; /* Move the image down to align with bottom of right-div */
+    bottom: -50px;
     right: 0;
 }
 
@@ -411,7 +376,6 @@
 
 /* How it works section */
 .howitworks {
-    background: linear-gradient(to bottom, #ffb30ef7 1%, #FFF8DC 25%, #FFF8DC 45%);
     padding: 5rem 0;
     text-align: center;
 }
@@ -785,4 +749,194 @@
     object-fit: cover;
 }
 
+/* Responsive Styles */
+@media screen and (max-width: 1200px) {
+    .container {
+        max-width: 95%;
+    }
+
+    .deals {
+        width: 85%;
+        margin: 0 auto 100px;
+    }
+}
+
+@media screen and (max-width: 992px) {
+    /* Main hero section */
+    .container {
+        padding: 0 1rem;
+    }
+
+    .main-title {
+        font-size: 2.5rem;
+    }
+
+    .subtitle {
+        font-size: 1rem;
+    }
+
+    .food-image {
+        width: 400px;
+        height: 400px;
+    }
+
+    /* Popular items section */
+    .popular-items-container {
+        overflow-x: auto;
+        padding: 1rem;
+        justify-content: flex-start;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; /* Firefox */
+    }
+
+    .popular-items-container::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Edge */
+    }
+
+    /* App section */
+    .app-content {
+        padding: 0 1rem;
+    }
+
+    .app-image img {
+        max-width: 350px;
+    }
+
+    /* Deals section */
+    .deal-card {
+        height: auto;
+        min-height: 280px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    /* Main hero section */
+    .container {
+        flex-direction: column;
+    }
+
+    .left-div, .right-div {
+        width: 100%;
+        padding-right: 0;
+        text-align: center;
+    }
+
+    .main-title {
+        font-size: 2.2rem;
+    }
+
+    .subtitle {
+        max-width: 100%;
+        margin: 0 auto 2rem;
+    }
+
+    .order-box {
+        margin: 0 auto 2rem;
+    }
+
+    .right-div {
+        height: 350px;
+        justify-content: center;
+    }
+
+    .food-image {
+        position: relative;
+        bottom: 0;
+        right: 0;
+        width: 350px;
+        height: 350px;
+    }
+
+    /* How it works section */
+    .steps-container {
+        flex-wrap: wrap;
+    }
+
+    .step {
+        min-width: 45%;
+    }
+
+    /* Install app section */
+    .app-content {
+        flex-direction: column-reverse;
+    }
+
+    .app-info {
+        max-width: 100%;
+        margin-top: 2rem;
+        text-align: center;
+    }
+
+    .app-stores {
+        justify-content: center;
+    }
+
+    /* Deals section */
+    .deal-card {
+        flex-direction: column;
+    }
+
+    .deal-content, .deal-image {
+        width: 100%;
+    }
+
+    .deal-image {
+        height: 200px;
+    }
+
+    .deal-content {
+        padding: 1.5rem;
+    }
+}
+
+@media screen and (max-width: 576px) {
+    /* Main hero section */
+    .main-title {
+        font-size: 2rem;
+    }
+
+    .right-div {
+        height: 300px;
+    }
+
+    .food-image {
+        width: 280px;
+        height: 280px;
+    }
+
+    /* How it works section */
+    .step {
+        min-width: 100%;
+    }
+
+    /* Features banner */
+    .features-content {
+        flex-direction: column;
+    }
+
+    .feature-divider {
+        width: 80%;
+        height: 1px;
+        margin: 15px 0;
+    }
+
+    /* App section */
+    .app-image img {
+        max-width: 280px;
+    }
+
+    /* Deals section */
+    .deal-title {
+        font-size: 1.2rem;
+    }
+
+    .deal-description {
+        font-size: 0.8rem;
+    }
+
+    .proceed-button {
+        padding: 8px 16px;
+        font-size: 0.7rem;
+    }
+}
 </style>

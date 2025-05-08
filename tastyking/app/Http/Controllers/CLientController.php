@@ -9,11 +9,30 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\Meal;
 use Illuminate\Support\Facades\Storage;
 
+use App\Models\Category;
+
 class CLientController extends Controller
 {
     public function showProfile()
     {
         return view('profile');
+    }
+
+    public function clientMenu(Request $request)
+    {
+        $categoryId = $request->query('category');
+
+        $mealsQuery = Meal::query();
+
+        if ($categoryId && $categoryId != 'all') {
+            $mealsQuery->where('category_id', $categoryId);
+        }
+
+        $meals = $mealsQuery->paginate(12)->withQueryString();
+        $categories = Category::all();
+        $selectedCategory = $categoryId;
+
+        return view('menu', compact('meals', 'categories', 'selectedCategory'));
     }
 
     public function editPersonalInfo(Request $request)

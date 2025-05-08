@@ -33,4 +33,14 @@ class Meal extends Model
     {
         return $this->hasMany(Review::class);
     }
+
+    public function carts(): HasMany
+    {
+        return $this->hasMany(Cart::class);
+    }
+
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
+    }
 }

@@ -10,39 +10,6 @@ use Illuminate\Support\Facades\Storage;
 
 class MealController extends Controller
 {
-    public function clientMenu(Request $request)
-    {
-        $categoryId = $request->query('category');
-
-        $mealsQuery = Meal::query();
-
-        if ($categoryId && $categoryId != 'all') {
-            $mealsQuery->where('category_id', $categoryId);
-        }
-
-        $meals = $mealsQuery->paginate(12)->withQueryString();
-        $categories = Category::all();
-        $selectedCategory = $categoryId;
-
-        return view('menu', compact('meals', 'categories', 'selectedCategory'));
-    }
-    public function chefMenu(Request $request)
-    {
-        $categoryId = $request->query('category');
-
-        $mealsQuery = Meal::query();
-
-        if ($categoryId && $categoryId != 'all') {
-            $mealsQuery->where('category_id', $categoryId);
-        }
-
-        $meals = $mealsQuery->paginate(12)->withQueryString();
-        $categories = Category::all();
-        $selectedCategory = $categoryId;
-
-        return view('chef.menu-management', compact('meals', 'categories', 'selectedCategory'));
-    }
-
     public function createMeal(Request $request)
     {
         $validator = validator($request->all(), [

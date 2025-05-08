@@ -18,6 +18,17 @@
             @endif
             </div>
 
+            @if(Auth::check() && Auth::user()->role == 'chef')
+            <div class="chef-nav-links">
+                <a href="{{ route('chef.menu-management') }}" class="chef-nav-link {{ request()->routeIs('chef.menu-management') ? 'active' : '' }}">
+                    Menu
+                </a>
+                <a href="{{ route('chef.orders-management') }}" class="chef-nav-link {{ request()->routeIs('chef.orders-management') ? 'active' : '' }}">
+                    Orders
+                </a>
+            </div>
+            @endif
+
 
             @auth
                 <div class="profile-container">
@@ -94,6 +105,7 @@
     width: 80%;
     margin: 0 auto;
     gap: 20px;
+    position: relative;
   }
 
 
@@ -225,6 +237,39 @@
 
   .show {
       display: block;
+  }
+
+  /* Chef Navigation Links Styles */
+  .chef-nav-links {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+  }
+
+  .chef-nav-link {
+      color: #333;
+      font-weight: 500;
+      font-size: 16px;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+  }
+
+  .chef-nav-link:hover {
+      background-color: #fff1c7;
+      color: #ffb30e;
+  }
+
+  .chef-nav-link.active {
+      background-color: #fff1c7;
+      color: #ffb30e;
+      font-weight: bold;
   }
 </style>
 

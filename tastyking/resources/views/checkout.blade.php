@@ -60,6 +60,7 @@
     <div class="checkout-section">
         <h2 class="section-title">Payment Method</h2>
         <div class="payment-options">
+          
             <div class="payment-option-container">
                 <input type="radio" id="cash" name="payment_method" value="cod" class="payment-radio" checked>
                 <label for="cash" class="payment-option cash">
@@ -79,7 +80,32 @@
 @include('layouts.footer')
 @endsection
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const paymentLabels = document.querySelectorAll('.payment-option');
+        const paymentRadios = document.querySelectorAll('.payment-radio');
 
+        // Set initial border for the checked radio button's label
+        const checkedRadio = document.querySelector('.payment-radio:checked');
+        if (checkedRadio) {
+            const label = document.querySelector(`label[for="${checkedRadio.id}"]`);
+            if (label) {
+                label.style.border = 'black 2px solid';
+            }
+        }
+
+        paymentLabels.forEach(label => {
+            label.addEventListener('click', function() {
+                // Reset all labels to default border
+                paymentLabels.forEach(lbl => {
+                    lbl.style.border = '';
+                });
+                // Set clicked label border
+                this.style.border = 'black 2px solid';
+            });
+        });
+    });
+</script>
 
 <style>
     .title {
@@ -231,12 +257,12 @@
         margin-top: 5px;
         display: block;
     }
-
+    
     .form-group input:has(+ .error-message),
     .form-group textarea:has(+ .error-message) {
         border-color: #dc3545;
     }
-
+    
     .payment-error {
         margin-top: 10px;
         text-align: center;

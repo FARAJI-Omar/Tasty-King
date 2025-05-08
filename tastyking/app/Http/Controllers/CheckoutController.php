@@ -84,9 +84,7 @@ class CheckoutController extends Controller
         $order->save();
 
         $request->session()->forget('checkout_order_id');
-
-        UpdateOrderStatusJob::dispatch($order->id)->delay(now()->addSeconds(5));
-
+        
         $cartItems = Cart::where('user_id', Auth::id())->get();
         foreach ($cartItems as $item) {
             $meal = Meal::find($item->meal_id);

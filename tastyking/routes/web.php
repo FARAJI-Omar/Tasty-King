@@ -1,11 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserAuthController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\CategoryControllerController;
 use App\Http\Controllers\CLientController;
 use App\Http\Controllers\MealController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ChefController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReviewController;
@@ -18,20 +21,20 @@ Route::get('/', function () {
 })->name('welcome');
 
 // authentication routes
-Route::get('/login', [UserAuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [UserAuthController::class, 'login'])->name('login');
-Route::get('/register', [UserAuthController::class, 'showRegisterForm'])->name('register');
-Route::post('/register', [UserAuthController::class, 'register'])->name('register');
+Route::get('/login', [UserController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [UserController::class, 'login'])->name('login');
+Route::get('/register', [UserController::class, 'showRegisterForm'])->name('register');
+Route::post('/register', [UserController::class, 'register'])->name('register');
 
 // require auth
 Route::middleware('auth')->group(function () {
-    Route::get('/logout', [UserAuthController::class, 'logout'])->name('logout');
+    Route::get('/logout', [UserController::class, 'logout'])->name('logout');
     Route::get('/search-meals/{name}', [MealController::class, 'search'])->name('search.meals');
 
 
     // client routes
     Route::middleware(RoleClient::class)->group(function () {
-        Route::get('menu', [MealController::class, 'clientMenu'])->name('menu');
+        Route::get('menu', [ClientController::class, 'clientMenu'])->name('menu');
 
         Route::get('profile', [CLientController::class, 'showProfile'])->name('profile');
         Route::put('profile/update-info', [CLientController::class, 'editPersonalInfo'])->name('profile.update-info');
@@ -46,7 +49,7 @@ Route::middleware('auth')->group(function () {
 
         Route::get('checkout', [CheckoutController::class, 'index'])->name('checkout');
         Route::post('checkout', [CheckoutController::class, 'placeOrder'])->name('place-order');
-        Route::get('generate-pdf/{id}', [CheckoutController::class, 'generatePDF'])->name('generate-pdf');
+        Route::get('generate-pdf/{id}', [CheckoutController::class, 'generatePDF'])->name('generating-pdf');
         Route::get('order-success', [OrderController::class, 'success'])->name('order.success');
 
         Route::get('order-tracking', [OrderController::class, 'orderTracking'])->name('order-tracking');
@@ -58,10 +61,14 @@ Route::middleware('auth')->group(function () {
 
     // chef routes
     Route::middleware(RoleChef::class)->group(function () {
-        Route::get('chef/menu-management', [MealController::class, 'chefMenu'])->name('chef.menu-management');
+        Route::get('chef/menu-management', [ChefController::class, 'chefMenu'])->name('chef.menu-management');
         Route::post('chef/create-meal', [MealController::class, 'createMeal'])->name('create-meal');
         Route::put('chef/update-meal/{id}', [MealController::class, 'updateMeal'])->name('update-meal');
         Route::delete('chef/delete-meal/{id}', [MealController::class, 'deleteMeal'])->name('delete-meal');
+
+        // Chef orders management routes
+        Route::get('chef/orders-management', [ChefController::class, 'ordersManagement'])->name('chef.orders-management');
+        Route::post('chef/update-order-status/{id}', [ChefController::class, 'updateOrderStatus'])->name('chef.update-order-status');
     });
 
     // admin routes
@@ -74,8 +81,8 @@ Route::middleware('auth')->group(function () {
         Route::post('admin/promote-to-chef', [AdminController::class, 'promoteToChef'])->name('promote-to-chef');
         Route::delete('admin/delete-user/{id}', [AdminController::class, 'deleteUser'])->name('delete-user');
         Route::get('admin/settings', [AdminController::class, 'settings'])->name('settings');
-        Route::post('admin/create-category', [AdminController::class, 'createCategory'])->name('create-category');
-        Route::delete('admin/delete-category/{id}', [AdminController::class, 'deleteCategory'])->name('delete-category');
+        Route::post('admin/create-category', [CategoryController::class, 'createCategory'])->name('create-category');
+        Route::delete('admin/delete-category/{id}', [CategoryController::class, 'deleteCategory'])->name('delete-category');
         Route::get('generate-pdf', [AdminController::class, 'generatePDF'])->name('generate-pdf');
     });
 });
